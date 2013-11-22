@@ -11,7 +11,6 @@
 #define PORT 12345
 
 
-
 #include "particle.h"
 #include "audioAnalytics.h"
 
@@ -50,12 +49,12 @@ public:
     ofCamera cam;
     
     //waves
-    vector<vector<float> > waveHistory, waveHistory2;
+    vector<vector<float> > waveHistory; //, waveHistory2;
     int track, track2;
     float bassAccum, time;
     
     //sun
-    ofFbo sunFbo;
+//    ofFbo cleanFbo;
     
     //boids
     int boidNum;
@@ -68,7 +67,8 @@ public:
     
     float noiseScale;
     float meshRotateX;
-    float camY, camZ;
+    float camX, camY, camZ;
+    float lookatX, lookatY, lookatZ;
     float sunY;
     ofFloatColor gradientStartPre;
     ofFloatColor gradientStart;

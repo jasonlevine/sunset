@@ -5,7 +5,6 @@ void testApp::setup(){
     aa.setupVectors();
     aa.loadTracks();
     aa.setupAUGraph();
-    aa.playStems();
     
     track = 2;
     track2 = 0;
@@ -23,14 +22,20 @@ void testApp::setup(){
     
     
     // Setup post-processing chain
-    post.init(1920, 1080); //ofGetWidth(), ofGetHeight()
-    post.createPass<FxaaPass>()->setEnabled(false);
+    post.init(1024, 768);
     post.createPass<BloomPass>()->setEnabled(false);
-    post.createPass<DofPass>()->setEnabled(false);
-    post.createPass<GodRaysPass>()->setEnabled(false);
+    post.createPass<DofAltPass>()->setEnabled(true);
+    post.createPass<GodRaysPass>()->setEnabled(true);
     post.createPass<RimHighlightingPass>()->setEnabled(false);
+    post.createPass<KaleidoscopePass>()->setEnabled(false);
+    
     
     renderPasses = post.getPasses();
+    shared_ptr<KaleidoscopePass> Kaleidoscope = static_pointer_cast<KaleidoscopePass>(renderPasses[4]);
+    Kaleidoscope->setSegments(0);
+
+    
+    
     //boids
     boidNum = 20;
 	target = ofVec3f(0, 0, 0);
@@ -52,6 +57,9 @@ void testApp::setup(){
     //osc
     receiver.setup(PORT);
 
+    lookatX = 0;
+    lookatY = 0;
+    lookatZ = -600;
 }
 
 //--------------------------------------------------------------
@@ -64,17 +72,17 @@ void testApp::update(){
     if (waveHistory.size() > 120) waveHistory.erase(waveHistory.begin());
     
     
-    vector<float> wave2;
-    aa.taps[track2]->getSamples(wave2, 0);
-    waveHistory2.push_back(wave2);
-    if (waveHistory2.size() > 120) waveHistory2.erase(waveHistory2.begin());
+//    vector<float> wave2;
+//    aa.taps[track2]->getSamples(wave2, 0);
+//    waveHistory2.push_back(wave2);
+//    if (waveHistory2.size() > 120) waveHistory2.erase(waveHistory2.begin());
     
     bassAccum += aa.amp[3] / 4;
     
     gui->update();
     
-    cam.setPosition(0, camY, camZ);
-    cam.lookAt(ofVec3f(0,0,-600));
+    cam.setPosition(camX, camY, camZ);
+    cam.lookAt(ofVec3f(lookatX, lookatY, lookatZ));
     
     
     for (int i = 0; i < boidNum; i++)
@@ -86,7 +94,7 @@ void testApp::update(){
 		boids[i].bounce(1000, 500, 500);
 	}
     
-    gradientStart = gradientStartPre + aa.amp[1] * 2;
+    gradientStart = gradientStartPre + aa.amp[1] * 4;
     
     updateOSC();
 }
@@ -119,33 +127,62 @@ void testApp::updateOSC() {
 		if(m.getAddress() == "/sunY"){
 			sunY = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 300);
 		}
-        
-        if(m.getAddress() == "/camY"){
-			camY = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 600);
+        else if(m.getAddress() == "/camY"){
+			camY = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 700);
 		}
-
-        if(m.getAddress() == "/meshRotateX"){
+        else if(m.getAddress() == "/camZ"){
+			camZ = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -600, 600);
+		}
+        else if(m.getAddress() == "/lookatX"){
+			lookatX = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -150, 150);
+		}
+        else if(m.getAddress() == "/lookatY"){
+			lookatY = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 500);
+		}
+        else if(m.getAddress() == "/meshRotateX"){
 			meshRotateX = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -90, 90);
 		}
-
-        if(m.getAddress() == "/sunColor"){
+        else if(m.getAddress() == "/sunColor"){
             sunColor.set((float)m.getArgAsInt32(0)/255, (float)m.getArgAsInt32(1)/255, (float)m.getArgAsInt32(2)/255);
 		}
-
-        if(m.getAddress() == "/gradientStart"){
+        else if(m.getAddress() == "/gradientStart"){
             gradientStartPre.set((float)m.getArgAsInt32(0)/255, (float)m.getArgAsInt32(1)/255, (float)m.getArgAsInt32(2)/255);
 		}
-
-        if(m.getAddress() == "/gradientEnd"){
+        else if(m.getAddress() == "/gradientEnd"){
             gradientEnd.set((float)m.getArgAsInt32(0)/255, (float)m.getArgAsInt32(1)/255, (float)m.getArgAsInt32(2)/255);
 		}
-
-        if(m.getAddress() == "/noiseScale"){
+        else if(m.getAddress() == "/noiseScale"){
 			noiseScale = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 0.1);
 		}
-        
-	}
+        else if(m.getAddress() == "/kaleidoscopeON"){
+            post[4]->setEnabled(true);
+            post[0]->setEnabled(true);
+		}
+        else if(m.getAddress() == "/numSegments"){
+			shared_ptr<KaleidoscopePass> Kaleidoscope = static_pointer_cast<KaleidoscopePass>(renderPasses[4]);
+            Kaleidoscope->setSegments(m.getArgAsFloat(0) * 10);
+		}
+        else if(m.getAddress() == "/fStop"){
+			shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[1]);
+            Dof->setFStop(m.getArgAsFloat(0) * 15);
+		}
+        else if(m.getAddress() == "/startTracks"){
+            aa.playStems();
+            post[4]->setEnabled(false);
+            post[0]->setEnabled(false);
+            cout << "bang!" << endl;
 
+		}
+        else if(m.getAddress() == "/rims"){
+            post[3]->setEnabled(true);
+            
+		}
+	}
+    /*
+     lookatX -150
+     lookatY 22
+     satop 15 down to 9
+     */
 }
 
 
@@ -163,7 +200,8 @@ void testApp::drawWaves(){
         for (int y = 0; y < height; y++){
             for (int x = 0; x<width; x++){
                 float noiseValue = ofNoise(x * noiseScale, y * noiseScale, noiseVel);
-                float h = waveHistory[y][x] * noiseValue + noiseValue * 0.5;
+//                float h = waveHistory[y][x] * 0.5 + waveHistory[y][x] * noiseValue * 0.5 + noiseValue * 0.5;
+                float h = waveHistory[y][x] * 0.5 + noiseValue * 0.5; //waveHistory[y][x] * noiseValue * 0.5 + 
                 mesh.addVertex(ofPoint(x, h, y)); //waveHistory[y][x] +
                 //float h = (waveHistory[y][x] + 1.0) / 2;
                 float r, g, b;
@@ -198,7 +236,7 @@ void testApp::drawWaves(){
         ofPushMatrix();
         ofRotateX(meshRotateX);
         ofRotateY(180);
-        ofScale(5,170,10);
+        ofScale(7,170,10);
         ofTranslate(-width/2, 0, -height/2);
         mesh.draw();
         ofPopMatrix();
@@ -219,30 +257,19 @@ void testApp::drawSun(){
     ofBackgroundGradient(gradientStart, gradientEnd);
     ofPopMatrix();
     
-    ofSetColor(sunColor, 127);
+    ofSetColor(sunColor, 200);
     ofBeginShape();
     for (int i = 0; i < 50; i++) {
-        int scale = 170 + abs((i % 2) - 1) * 20 + aa.audioFeatures[0]->spectrum[i] * 20;
+        int scale = 170 + abs((i % 2) - 1) * 20 + aa.audioFeatures[0]->spectrum[i] * 30;
         float x = cos(float(i) / 50 * TWO_PI) * scale;
         float y = sunY + sin(float(i) / 50 * TWO_PI) * scale;
         ofVertex(x,y, -651);
     }
     ofEndShape();
-//    post.end();
-    
-    
     
     ofSetColor(sunColor);
-//    ofSetCircleResolution(50);
-//    
-//    ofCircle(0, 0, -600, 150);
     ofDrawSphere(0,sunY,-650,150);
-    
-//    ofSetColor(gold);
-//    for (int i = 0; i < particles.size(); i++) {
-//        float size = ofMap(particles[i].pos.length(), 0, 170, 10, 5);
-//        ofCircle(particles[i].pos.x, particles[i].pos.y, -600, size);
-//    }
+
     ofPopMatrix();
     
     
@@ -274,11 +301,12 @@ void testApp::drawBirds(){
 	{
 		ofPushMatrix();
 		ofTranslate(boids[i].position.x, boids[i].position.y, boids[i].position.z);
-		
+		ofPushStyle();
         ofSetColor(0);
+        ofSetLineWidth(3);
         wing1.draw();
         wing2.draw();
-    
+        ofPopStyle();
         ofPopMatrix();
 	}
 	
@@ -291,6 +319,7 @@ void testApp::drawBirds(){
 void testApp::setupGUI(){
     noiseScale = 0.01;
     meshRotateX = 0.0;
+    camX = 0;
     camY = 150;
     camZ = 600;
     sunY = 0;
@@ -302,27 +331,38 @@ void testApp::setupGUI(){
     gui = new ofxUICanvas(0, 0, length+xInit, ofGetHeight());
     
     gui->addFPSSlider("FPS SLIDER", length-xInit, dim*.25, 1000);
-    gui->addSpacer(length-xInit, 1);
-    gui->addSlider("noiseScale", 0.0, 0.1, &noiseScale, length-xInit, dim);
-    gui->addSlider("meshRotateX", -90.0, 90, &meshRotateX, length-xInit, dim);
+//    gui->addSpacer(length-xInit, 1);
+//    gui->addSlider("noiseScale", 0.0, 0.1, &noiseScale, length-xInit, dim);
+//    gui->addSlider("meshRotateX", -90.0, 90, &meshRotateX, length-xInit, dim);
+        gui->addSlider("camX", -260, 260, &camX, length-xInit, dim);
     gui->addSlider("camY", 0.0, 500, &camY, length-xInit, dim);
     gui->addSlider("camZ", -600, 600, &camZ, length-xInit, dim);
+    gui->addSlider("lookatX", -260, 260, &lookatX, length-xInit, dim);
+    gui->addSlider("lookatY", -500, 500, &lookatY, length-xInit, dim);
+    gui->addSlider("lookatZ", -600, 600, &lookatZ, length-xInit, dim);
+//    gui->addSpacer(length-xInit, 1);
+//    gui->addSlider("sunY", 0, 300, &sunY, length-xInit, dim);
+//    gui->addSlider("sunColor.r", 0.0, 1.0, &sunColor.r, length-xInit, dim);
+//    gui->addSlider("sunColor.g", 0.0, 1.0, &sunColor.g, length-xInit, dim);
+//    gui->addSlider("sunColor.b", 0.0, 1.0, &sunColor.b, length-xInit, dim);
+//    gui->addSlider("gradientStart.r", 0.0, 1.0, &gradientStartPre.r, length-xInit, dim);
+//    gui->addSlider("gradientStart.g", 0.0, 1.0, &gradientStartPre.g, length-xInit, dim);
+//    gui->addSlider("gradientStart.b", 0.0, 1.0, &gradientStartPre.b, length-xInit, dim);
+//    gui->addSlider("gradientEnd.r", 0.0, 1.0, &gradientEnd.r, length-xInit, dim);
+//    gui->addSlider("gradientEnd.g", 0.0, 1.0, &gradientEnd.g, length-xInit, dim);
+//    gui->addSlider("gradientEnd.b", 0.0, 1.0, &gradientEnd.b, length-xInit, dim);
     gui->addSpacer(length-xInit, 1);
-    gui->addSlider("sunY", 0, 300, &sunY, length-xInit, dim);
-    gui->addSlider("sunColor.r", 0.0, 1.0, &sunColor.r, length-xInit, dim);
-    gui->addSlider("sunColor.g", 0.0, 1.0, &sunColor.g, length-xInit, dim);
-    gui->addSlider("sunColor.b", 0.0, 1.0, &sunColor.b, length-xInit, dim);
-    gui->addSlider("gradientStart.r", 0.0, 1.0, &gradientStartPre.r, length-xInit, dim);
-    gui->addSlider("gradientStart.g", 0.0, 1.0, &gradientStartPre.g, length-xInit, dim);
-    gui->addSlider("gradientStart.b", 0.0, 1.0, &gradientStartPre.b, length-xInit, dim);
-    gui->addSlider("gradientEnd.r", 0.0, 1.0, &gradientEnd.r, length-xInit, dim);
-    gui->addSlider("gradientEnd.g", 0.0, 1.0, &gradientEnd.g, length-xInit, dim);
-    gui->addSlider("gradientEnd.b", 0.0, 1.0, &gradientEnd.b, length-xInit, dim);
+    gui->addLabelToggle("Kaleidoscope", false);
+    gui->addSlider("numSegments", 1.0, 10.0, 1.0, length-xInit, dim);
+    gui->addLabelToggle("Bloom", false);
+    gui->addLabelToggle("Dof", false);
     gui->addSpacer(length-xInit, 1);
     gui->addSlider("DofFocalDepth", 1.0, 1.01, 1.0, length-xInit, dim);
     gui->addSlider("DofFocalLength", 10, 1000, 500, length-xInit, dim);
     gui->addSlider("DofFStop", 1.0, 15.0, 1.0, length-xInit, dim);
-    gui->addLabelToggle("DofShowFocus", false);
+    gui->addSpacer(length-xInit, 1);
+    gui->addLabelToggle("GodRays", false);
+    gui->addLabelToggle("RimHighlighting", false);
     ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);
 }
 
@@ -335,34 +375,60 @@ void testApp::guiEvent(ofxUIEventArgs &e){
     if(name == "DofFocalDepth")
     {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
-        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[2]);
+        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[1]);
         Dof->setFocalDepth(slider->getScaledValue());
 	}
     else if(name == "DofFocalLength")
     {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
-        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[2]);
+        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[1]);
         Dof->setFocalLength(slider->getScaledValue());
 	}
     else if(name == "DofFStop")
     {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
-        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[2]);
+        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[1]);
         Dof->setFStop(slider->getScaledValue());
 	}
-    else if(name == "DofShowFocus") //kind == OFX_UI_WIDGET_LABELBUTTON
+    else if(name == "numSegments")
     {
-        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
-        shared_ptr<DofAltPass> Dof = static_pointer_cast<DofAltPass>(renderPasses[2]);
-        cout << button->getValue();
-        Dof->setShowFocus(button->getValue());
-    }
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        shared_ptr<KaleidoscopePass> Kaleidoscope = static_pointer_cast<KaleidoscopePass>(renderPasses[4]);
+        Kaleidoscope->setSegments(slider->getScaledValue());
+	}
+
     else if(name == "sunY")
     {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
-        shared_ptr<GodRaysPass> godRays = static_pointer_cast<GodRaysPass>(renderPasses[3]);
+        shared_ptr<GodRaysPass> godRays = static_pointer_cast<GodRaysPass>(renderPasses[2]);
         godRays->setLightPositionOnScreen(ofVec3f(0, sunY, -600));
 	}
+    else if(name == "Bloom") //kind == OFX_UI_WIDGET_LABELBUTTON
+    {
+        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+        post[0]->setEnabled(button->getValue());
+    }
+    else if(name == "Dof") //kind == OFX_UI_WIDGET_LABELBUTTON
+    {
+        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+        post[1]->setEnabled(button->getValue());
+    }
+    else if(name == "GodRays") //kind == OFX_UI_WIDGET_LABELBUTTON
+    {
+        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+        post[2]->setEnabled(button->getValue());
+    }
+    else if(name == "RimHighlighting") //kind == OFX_UI_WIDGET_LABELBUTTON
+    {
+        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+        post[3]->setEnabled(button->getValue());
+    }
+       else if(name == "Kaleidoscope") //kind == OFX_UI_WIDGET_LABELBUTTON
+    {
+        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+        post[4]->setEnabled(button->getValue());
+    }
+
 
     
 
