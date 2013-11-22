@@ -90,4 +90,6 @@ public:
     float shadeBlendMix;
     int shadeBlendMode;
     
+    ofSoundPlayer realTrack;
+    
 };

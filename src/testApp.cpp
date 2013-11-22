@@ -6,6 +6,9 @@ void testApp::setup(){
     aa.loadTracks();
     aa.setupAUGraph();
     
+    realTrack.loadSound("02 Just You.aif");
+    
+    
     track = 2;
     track2 = 0;
     ofSetDepthTest(true);
@@ -119,16 +122,23 @@ void testApp::draw(){
     
     ofEnableAlphaBlending();
     
-    mainFbo.begin();
-    cam.begin();
-    ofClear(255,255,255,0);
+//    mainFbo.begin();
+//    cam.begin();
+    post.begin(cam);
     drawWaves();
     drawSun();
     drawBirds();
-    cam.end();
-    mainFbo.end();
-    post.process(mainFbo);
+    post.end(false);
+//    cam.end();
+//    mainFbo.end();
+//    post.process(mainFbo);
 //    }
+    
+    mainFbo.begin();
+    ofClear(255,255,255,0);
+    post.draw(0, 0, 1024, 768);
+    mainFbo.end();
+    
     if (drawPost) {
         mainFbo.draw(0,0);
     }
@@ -200,6 +210,7 @@ void testApp::updateOSC() {
 		}
         else if(m.getAddress() == "/startTracks"){
             aa.playStems();
+            realTrack.play();
             post[0]->setEnabled(false);
             post[3]->setEnabled(false);
             post[4]->setEnabled(false);
