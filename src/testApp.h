@@ -26,6 +26,7 @@ public:
     void drawWaves();
     void drawSun();
     void drawBirds();
+    void drawWaveform();
     
     void setupGUI();
     void guiEvent(ofxUIEventArgs &e);
@@ -54,7 +55,7 @@ public:
     float bassAccum, time;
     
     //sun
-//    ofFbo cleanFbo;
+    ofFbo startFbo;
     
     //boids
     int boidNum;
@@ -76,11 +77,12 @@ public:
     ofFloatColor sunColor;
     
     //postproc vars
-    
+    float waveStrength, noiseStrength;
+    float meshAlpha;
     
     ofxOscReceiver receiver;
     
 //    vector<particle> particles;
-    
+    bool drawPost;
     
 };

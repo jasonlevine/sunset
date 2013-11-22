@@ -58,7 +58,6 @@
 		90ABE9AF183BD51700EC0F68 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9A9183BD51700EC0F68 /* tinyxmlerror.cpp */; };
 		90ABE9B0183BD51700EC0F68 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AA183BD51700EC0F68 /* tinyxmlparser.cpp */; };
 		90ABE9B1183BD51700EC0F68 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AC183BD51700EC0F68 /* ofxXmlSettings.cpp */; };
-		90ABEA1B183C090600EC0F68 /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABEA19183C090600EC0F68 /* particle.cpp */; };
 		9177f62acd8b721065a083f069ca8361 /* ofxAudioDeviceControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = ae197401a06411e94419ee7963ba271f /* ofxAudioDeviceControl.mm */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -349,8 +348,6 @@
 		90ABE9AA183BD51700EC0F68 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		90ABE9AC183BD51700EC0F68 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		90ABE9AD183BD51700EC0F68 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
-		90ABEA19183C090600EC0F68 /* particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = particle.cpp; sourceTree = "<group>"; };
-		90ABEA1A183C090600EC0F68 /* particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = particle.h; sourceTree = "<group>"; };
 		91821b92c0988056ec2f9256cc1bfe47 /* ofxAudioFeaturesChannel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAudioFeaturesChannel.cpp; path = ../../../addons/ofxAudioFeatures/src/ofxAudioFeaturesChannel.cpp; sourceTree = SOURCE_ROOT; };
 		91f91c3bead0b3c2b92bb9a56f61c300 /* DofAltPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = DofAltPass.cpp; path = ../../../addons/ofxPostProcessing/src/DofAltPass.cpp; sourceTree = SOURCE_ROOT; };
 		921304abbee9bbad134368987c452278 /* ofxAudioUnitInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAudioUnitInput.cpp; path = ../../../addons/ofxAudioUnit/src/ofxAudioUnitInput.cpp; sourceTree = SOURCE_ROOT; };
@@ -1061,8 +1058,6 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				90ABEA19183C090600EC0F68 /* particle.cpp */,
-				90ABEA1A183C090600EC0F68 /* particle.h */,
 				904AAC7018388F8600B7EB00 /* audioAnalytics.cpp */,
 				904AAC7118388F8600B7EB00 /* audioAnalytics.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
@@ -1294,7 +1289,6 @@
 				28afd6fa9b9c885afd9ff1c76fa24dde /* HorizontalTiltShifPass.cpp in Sources */,
 				884cb4d049e35c51e949a5650d4f48df /* KaleidoscopePass.cpp in Sources */,
 				7ab51f1099dc01486d18faf6a8265b91 /* LimbDarkeningPass.cpp in Sources */,
-				90ABEA1B183C090600EC0F68 /* particle.cpp in Sources */,
 				9096E4CB183E7D3900E8A21B /* OscOutboundPacketStream.cpp in Sources */,
 				b1747f12881d899dca2647fc14399a77 /* LUTPass.cpp in Sources */,
 				8072a86e35f7000f7cdeef4299088a73 /* NoiseWarpPass.cpp in Sources */,

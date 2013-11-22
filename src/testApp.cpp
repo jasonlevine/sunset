@@ -20,6 +20,7 @@ void testApp::setup(){
         waveHistory.push_back(wave);
     }
     
+    startFbo.allocate(1024, 768, GL_RGBA);
     
     // Setup post-processing chain
     post.init(1024, 768);
@@ -60,6 +61,11 @@ void testApp::setup(){
     lookatX = 0;
     lookatY = 0;
     lookatZ = -600;
+    
+    waveStrength = 1.0;
+    noiseStrength = 0.0;
+    
+    drawPost = false;
 }
 
 //--------------------------------------------------------------
@@ -104,14 +110,20 @@ void testApp::draw(){
 //    aa.drawAnalytics();
     
     ofEnableAlphaBlending();
-    
+    if ( drawPost) {
     post.begin(cam);
 //    cam.begin();
+    ofClear(255,255,255,0);
     drawWaves();
     drawSun();
     drawBirds();
 //    cam.end();
     post.end();
+    }
+    else {
+        drawWaveform();
+        startFbo.draw(0,0);
+    }
     ofDisableAlphaBlending();
 
 }
@@ -137,10 +149,13 @@ void testApp::updateOSC() {
 			lookatX = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -150, 150);
 		}
         else if(m.getAddress() == "/lookatY"){
-			lookatY = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 500);
+			lookatY = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -150, 22);
 		}
         else if(m.getAddress() == "/meshRotateX"){
 			meshRotateX = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -90, 90);
+		}
+        else if(m.getAddress() == "/meshAlpha"){
+			meshAlpha = m.getArgAsFloat(0);
 		}
         else if(m.getAddress() == "/sunColor"){
             sunColor.set((float)m.getArgAsInt32(0)/255, (float)m.getArgAsInt32(1)/255, (float)m.getArgAsInt32(2)/255);
@@ -153,6 +168,10 @@ void testApp::updateOSC() {
 		}
         else if(m.getAddress() == "/noiseScale"){
 			noiseScale = ofMap(m.getArgAsFloat(0), 0.0, 1.0, 0, 0.1);
+		}
+        else if(m.getAddress() == "/noiseStrength"){
+			noiseStrength = m.getArgAsFloat(0);
+            waveStrength = 1.0 - noiseStrength;
 		}
         else if(m.getAddress() == "/kaleidoscopeON"){
             post[4]->setEnabled(true);
@@ -168,8 +187,9 @@ void testApp::updateOSC() {
 		}
         else if(m.getAddress() == "/startTracks"){
             aa.playStems();
-            post[4]->setEnabled(false);
             post[0]->setEnabled(false);
+            post[3]->setEnabled(false);
+            post[4]->setEnabled(false);
             cout << "bang!" << endl;
 
 		}
@@ -201,7 +221,7 @@ void testApp::drawWaves(){
             for (int x = 0; x<width; x++){
                 float noiseValue = ofNoise(x * noiseScale, y * noiseScale, noiseVel);
 //                float h = waveHistory[y][x] * 0.5 + waveHistory[y][x] * noiseValue * 0.5 + noiseValue * 0.5;
-                float h = waveHistory[y][x] * 0.5 + noiseValue * 0.5; //waveHistory[y][x] * noiseValue * 0.5 + 
+                float h = waveHistory[y][x] * waveStrength + noiseValue * noiseStrength; //waveHistory[y][x] * noiseValue * 0.5 +
                 mesh.addVertex(ofPoint(x, h, y)); //waveHistory[y][x] +
                 //float h = (waveHistory[y][x] + 1.0) / 2;
                 float r, g, b;
@@ -213,7 +233,7 @@ void testApp::drawWaves(){
                 ofFloatColor gradient = gradientStart * (1.0 - dist) + gradientEnd * dist;
                 float yDist = float(y) / height;
                 float yDistSq = yDist * yDist;
-                mesh.addColor(ofFloatColor(r,g,b) * (1.0 - yDistSq) + gradient * yDistSq);  // add a color at that vertex
+                mesh.addColor(ofFloatColor(r,g,b, meshAlpha) * (1.0 - yDistSq) + gradient * yDistSq);  // add a color at that vertex
             }
         }
         
@@ -236,10 +256,11 @@ void testApp::drawWaves(){
         ofPushMatrix();
         ofRotateX(meshRotateX);
         ofRotateY(180);
-        ofScale(7,170,10);
+        ofScale(7,180,10);
         ofTranslate(-width/2, 0, -height/2);
         mesh.draw();
         ofPopMatrix();
+        
     }
 
 }
@@ -313,6 +334,38 @@ void testApp::drawBirds(){
 //	cam.end();
     
 }
+
+//--------------------------------------------------------------
+void testApp::drawWaveform() {
+    int width = 512;
+    int height = waveHistory.size();
+    
+    startFbo.begin();
+    ofClear(0,0,0,0);
+    cam.begin();
+    ofSetColor(255);
+    ofNoFill();
+    
+    ofPushMatrix();
+    ofRotateX(meshRotateX);
+    ofRotateY(180);
+    ofScale(7,180,10);
+    ofTranslate(-width/2, 0, -height/2);
+    ofBeginShape();
+    for (int x = 0; x<width; x++){
+        ofVertex(x, waveHistory[waveHistory.size()-1][x], waveHistory.size()-1);
+    }
+    ofEndShape();
+    ofPopMatrix();
+    
+    ofFill();
+    cam.end();
+    startFbo.end();
+
+    
+}
+
+
 
 
 //--------------------------------------------------------------
@@ -503,7 +556,14 @@ void testApp::keyPressed(int key){
         {
             gui->toggleVisible();
         }
+            break;
+            
+        case 'p':
+            drawPost = !drawPost;
+            break;
+        
     }
+    
     
     
 }
