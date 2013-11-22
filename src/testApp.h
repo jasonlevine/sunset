@@ -26,10 +26,10 @@ public:
     void drawBirds();
     void drawWaveform();
     
+    void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
+    
     void setupGUI();
     void guiEvent(ofxUIEventArgs &e);
-    
-    void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
 
     void keyPressed(int key);
     void keyReleased(int key);
@@ -55,7 +55,7 @@ public:
     float bassAccum, time;
     
     //sun
-    ofFbo startFbo, finalFbo;
+    ofFbo startFbo, mainFbo, finalFbo;
     
     //boids
     int boidNum;

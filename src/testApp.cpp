@@ -21,6 +21,7 @@ void testApp::setup(){
     }
     
     startFbo.allocate(1024, 768, GL_RGBA);
+    mainFbo.allocate(1024, 768, GL_RGBA);
     finalFbo.allocate(1024, 768, GL_RGBA);
     
     // Setup post-processing chain
@@ -71,7 +72,7 @@ void testApp::setup(){
     
     ///blend
     shaderBlend.load("shaders/blendShader");
-    shadeBlendMix = 0.95;
+    shadeBlendMix = 0.5;
     shadeBlendMode = 1;
 }
 
@@ -117,19 +118,24 @@ void testApp::draw(){
 //    aa.drawAnalytics();
     
     ofEnableAlphaBlending();
-    if ( drawPost) {
-    post.begin(cam);
-//    cam.begin();
+    
+    mainFbo.begin();
+    cam.begin();
     ofClear(255,255,255,0);
     drawWaves();
     drawSun();
     drawBirds();
-//    cam.end();
-    post.end(false);
+    cam.end();
+    mainFbo.end();
+    post.process(mainFbo);
+//    }
+    if (drawPost) {
+        mainFbo.draw(0,0);
     }
     else {
         drawWaveform();
-        blend(startFbo, post.get
+        blend(startFbo, mainFbo, finalFbo, fboBlend, 0);
+        finalFbo.draw(0,0);
     }
     ofDisableAlphaBlending();
 
@@ -348,11 +354,16 @@ void testApp::drawWaveform() {
     int height = waveHistory.size();
     
     startFbo.begin();
-    ofClear(0,0,0,0);
+    ofClear(0, 0, 0, 0);
+//    ofSetColor(0);
+//    ofRect(0, 0, startFbo.getWidth(), startFbo.getHeight());
     cam.begin();
+    ofBackground(0);
     ofSetColor(255);
-    ofNoFill();
     
+    ofPushStyle();
+    ofNoFill();
+    ofSetLineWidth(3);
     ofPushMatrix();
     ofRotateX(meshRotateX);
     ofRotateY(180);
@@ -364,7 +375,7 @@ void testApp::drawWaveform() {
     }
     ofEndShape();
     ofPopMatrix();
-    
+    ofPopStyle();
     ofFill();
     cam.end();
     startFbo.end();
