@@ -21,6 +21,7 @@ void testApp::setup(){
     }
     
     startFbo.allocate(1024, 768, GL_RGBA);
+    finalFbo.allocate(1024, 768, GL_RGBA);
     
     // Setup post-processing chain
     post.init(1024, 768);
@@ -66,6 +67,12 @@ void testApp::setup(){
     noiseStrength = 0.0;
     
     drawPost = false;
+    
+    
+    ///blend
+    shaderBlend.load("shaders/blendShader");
+    shadeBlendMix = 0.95;
+    shadeBlendMode = 1;
 }
 
 //--------------------------------------------------------------
@@ -118,11 +125,11 @@ void testApp::draw(){
     drawSun();
     drawBirds();
 //    cam.end();
-    post.end();
+    post.end(false);
     }
     else {
         drawWaveform();
-        startFbo.draw(0,0);
+        blend(startFbo, post.get
     }
     ofDisableAlphaBlending();
 
@@ -154,8 +161,8 @@ void testApp::updateOSC() {
         else if(m.getAddress() == "/meshRotateX"){
 			meshRotateX = ofMap(m.getArgAsFloat(0), 0.0, 1.0, -90, 90);
 		}
-        else if(m.getAddress() == "/meshAlpha"){
-			meshAlpha = m.getArgAsFloat(0);
+        else if(m.getAddress() == "/fboBlend"){
+			fboBlend = m.getArgAsFloat(0);
 		}
         else if(m.getAddress() == "/sunColor"){
             sunColor.set((float)m.getArgAsInt32(0)/255, (float)m.getArgAsInt32(1)/255, (float)m.getArgAsInt32(2)/255);
@@ -233,7 +240,7 @@ void testApp::drawWaves(){
                 ofFloatColor gradient = gradientStart * (1.0 - dist) + gradientEnd * dist;
                 float yDist = float(y) / height;
                 float yDistSq = yDist * yDist;
-                mesh.addColor(ofFloatColor(r,g,b, meshAlpha) * (1.0 - yDistSq) + gradient * yDistSq);  // add a color at that vertex
+                mesh.addColor(ofFloatColor(r,g,b) * (1.0 - yDistSq) + gradient * yDistSq);  // add a color at that vertex
             }
         }
         
@@ -366,6 +373,32 @@ void testApp::drawWaveform() {
 }
 
 
+//--------------------------------------------------------------
+void testApp::blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode)
+{
+    ofTexture texBase = base.getTextureReference();
+    ofTexture texBlend = blend.getTextureReference();
+    
+    result.begin();
+    ofClear(0, 0, 0, 1);
+    
+    shaderBlend.begin();
+    shaderBlend.setUniform1f( "blendmix",	mix );
+    shaderBlend.setUniform1i( "blendmode",	mode);
+    shaderBlend.setUniformTexture("texBase",   texBase, 0 );
+    shaderBlend.setUniformTexture("texBlend",  texBlend, 1 );
+    
+    
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
+    glTexCoord2f(ofGetWidth(), 0); glVertex3f(ofGetWidth(), 0, 0);
+    glTexCoord2f(ofGetWidth(), ofGetHeight()); glVertex3f(ofGetWidth(), ofGetHeight(), 0);
+    glTexCoord2f(0,ofGetHeight());  glVertex3f(0,ofGetHeight(), 0);
+    glEnd();
+    
+    shaderBlend.end();
+    result.end();
+}
 
 
 //--------------------------------------------------------------

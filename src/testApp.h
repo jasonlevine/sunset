@@ -10,8 +10,6 @@
 #include "ofxOsc.h"
 #define PORT 12345
 
-
-#include "particle.h"
 #include "audioAnalytics.h"
 
 class testApp : public ofBaseApp{
@@ -30,6 +28,8 @@ public:
     
     void setupGUI();
     void guiEvent(ofxUIEventArgs &e);
+    
+    void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
 
     void keyPressed(int key);
     void keyReleased(int key);
@@ -50,12 +50,12 @@ public:
     ofCamera cam;
     
     //waves
-    vector<vector<float> > waveHistory; //, waveHistory2;
+    vector<vector<float> > waveHistory;
     int track, track2;
     float bassAccum, time;
     
     //sun
-    ofFbo startFbo;
+    ofFbo startFbo, finalFbo;
     
     //boids
     int boidNum;
@@ -78,11 +78,16 @@ public:
     
     //postproc vars
     float waveStrength, noiseStrength;
-    float meshAlpha;
+    float fboBlend;
     
     ofxOscReceiver receiver;
     
-//    vector<particle> particles;
+
     bool drawPost;
+    
+    //belnd
+    ofShader shaderBlend;
+    float shadeBlendMix;
+    int shadeBlendMode;
     
 };
