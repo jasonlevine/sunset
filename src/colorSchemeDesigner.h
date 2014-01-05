@@ -20,6 +20,7 @@ public:
     
     void addColorRef(ofFloatColor *col) { assignColors.push_back(col); }
 	void assignRandom(bool unique);
+    ofFloatColor getRandomColor();
 	
     ofxUICanvas * gui;
     ofxUIDropDownList *ddl;

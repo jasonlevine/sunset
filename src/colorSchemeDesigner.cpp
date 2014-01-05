@@ -386,3 +386,42 @@ void colorSchemeDesigner::updateColorScheme() {
     }
 	applyColors();
 }
+
+ofFloatColor colorSchemeDesigner::getRandomColor(){
+    int hue = 0;
+    
+    vector<int> indices;
+    indices.push_back(0);
+    indices.push_back(2);
+    indices.push_back(3);
+    
+    switch(mode) {
+        case 0:
+            hue = 0;
+            break;
+        
+        case 1:
+            hue = ofRandom(1);
+            break;
+            
+        case 2:
+            hue = indices[ofRandom(2)];
+            break;
+            
+        case 3:
+            hue = ofRandom(3);
+            break;
+            
+        case 4:
+            hue = indices[ofRandom(2)];
+            break;
+            
+        case 5:
+            hue = ofRandom(3);
+            break;
+    }
+    
+    int variant = ofRandom(colorScheme[hue].size()-1);
+    return colorScheme[hue][variant];
+}
+

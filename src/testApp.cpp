@@ -54,22 +54,39 @@ void testApp::setup(){
     shadeBlendMode = 1;
     
     state = 0;
+    
+    centroidSmoothed.setNumPValues(60);
+    rmsDecayed.setDecay(0.95);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     aa.updateAnalytics();
+    
+    centroidSmoothed.addValue(ofMap(aa.audioFeatures[0]->spectralFeatures["centroid"], 20, 55, 0.0, 1.0));
+//    rms.decayed.addValue(ofMap(aa.amp[0], 0,
+    
+    
+    colorScheme.setHue(centroidSmoothed.getMean());
+    colorScheme.setBrightness(aa.amp[0]);
 
     vector<float> wave;
     aa.taps[0]->getSamples(wave, 0);
     waveHistory.push_back(wave);
     if (waveHistory.size() > 120) waveHistory.erase(waveHistory.begin());
 
+    waveHiHistory.push_back(colorScheme.getRandomColor());
+    if (waveHiHistory.size() > 120) waveHiHistory.erase(waveHiHistory.begin());
+    
+    waveLoHistory.push_back(colorScheme.getRandomColor());
+    if (waveLoHistory.size() > 120) waveLoHistory.erase(waveLoHistory.begin());
     
     gui->update();
     
     cam.setPosition(camX, camY, camZ);
     cam.lookAt(ofVec3f(lookatX, lookatY, lookatZ));
+    
+    
 }
 
 //--------------------------------------------------------------
@@ -82,12 +99,15 @@ void testApp::draw(){
 //    cam.begin();
     if (state == 0) {
         post.begin(cam);
-        ofBackground(colors[12]);
+        ofBackground(25); //colorScheme.colorScheme[0][0]
         drawWaves();
         post.end();
     }
     else if (state == 1) {
         colorScheme.draw();
+    }
+    else if (state == 2) {
+        aa.drawAnalytics();
     }
 //    cam.end();
 //    mainFbo.end();
@@ -109,14 +129,14 @@ void testApp::drawWaves(){
         ofMesh mesh;
         
         for (int y = 0; y < height; y++){
-            ofFloatColor waveHi = colors[y % 11];
-            ofFloatColor waveLo = colors[(y+1) % 11];
+//            ofFloatColor waveHi = colorScheme.getRandomColor();
+//            ofFloatColor waveLo = colorScheme.getRandomColor();
             for (int x = 0; x<width; x++){
                 float h = waveHistory[y][x];
                 mesh.addVertex(ofPoint(x, h * hScale, y));
                 
                 float col = h * colScale;
-                mesh.addColor(waveHi * col + waveLo * (1.0 - col));
+                mesh.addColor(waveHiHistory[y] * col + waveLoHistory[y] * (1.0 - col));
                 
                 //float h = (waveHistory[y][x] + 1.0) / 2;
 //                float r, g, b;
@@ -282,16 +302,15 @@ void testApp::keyPressed(int key){
     
     switch (key) {
 
-//        case '0':
-//        case '1':
-//        case '2':
-//        case '3':
-//        case '4':
-//        case '5':
-//        case '6':
-//            aa.setMode(key - 48);
-////            track = key - 48;
-//            break;
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+            aa.setMode(key - 48);
+            break;
 
                             
             
@@ -308,20 +327,31 @@ void testApp::keyPressed(int key){
             break;
             
         case 's':
-            state = (state + 1) % 2;
-            if (state == 0)
+            state = (state + 1) % 3;
+            if (state == 0){
                 colorScheme.gui->setVisible(false);
-            else if (state == 1)
+            }
+            else if (state == 1) {
                 gui->setVisible(false);
                 colorScheme.gui->setVisible(true);
+            }
+            else if (state == 2) {
+                gui->setVisible(false);
+                colorScheme.gui->setVisible(false);
+            }
             break;
             
         case 'p':
-            drawPost = !drawPost;
+            aa.playStems(0);
             break;
         
         case 'r':
             colorScheme.assignRandom(true);
+            break;
+            
+        case 'F':
+            
+            cout << "centroid " << aa.audioFeatures[0]->spectralFeatures["centroid"] << endl;
             break;
         
     }

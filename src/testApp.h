@@ -7,6 +7,8 @@
 
 #include "audioAnalytics.h"
 #include "colorSchemeDesigner.h"
+#include "smoother.h"
+#include "decayer.h"
 
 class testApp : public ofBaseApp{
 
@@ -48,6 +50,9 @@ public:
     
     //waves
     vector<vector<float> > waveHistory;
+    vector<ofFloatColor> waveHiHistory;
+    vector<ofFloatColor> waveLoHistory;
+    
 
     //UI variables
     ofxUICanvas *gui;
@@ -70,5 +75,8 @@ public:
     
     //ofFloatColor waveLo, waveHi, bg;
     vector<ofFloatColor> colors;
+    
+    smoother centroidSmoothed;
+    decayer rmsDecayed;
     
 };

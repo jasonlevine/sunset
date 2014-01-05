@@ -37,6 +37,7 @@
 		898cb0955cb42feb5d750a5c9e12ef6f /* VerticalTiltShifPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2c2b73dcdaf417a486a343efc73b1574 /* VerticalTiltShifPass.cpp */; };
 		904AAC6E18388F2B00B7EB00 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 904AAC6C18388F2A00B7EB00 /* AudioUnit.framework */; };
 		904AAC6F18388F2B00B7EB00 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 904AAC6D18388F2A00B7EB00 /* CoreAudioKit.framework */; };
+		90A048A2187A163300522E14 /* smoother.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A048A0187A163300522E14 /* smoother.cpp */; };
 		90ABE9AE183BD51700EC0F68 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9A7183BD51700EC0F68 /* tinyxml.cpp */; };
 		90ABE9AF183BD51700EC0F68 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9A9183BD51700EC0F68 /* tinyxmlerror.cpp */; };
 		90ABE9B0183BD51700EC0F68 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AA183BD51700EC0F68 /* tinyxmlparser.cpp */; };
@@ -200,6 +201,9 @@
 		904AAC6C18388F2A00B7EB00 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		904AAC6D18388F2A00B7EB00 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		908b13275b242f3ea5f76eea83361fa7 /* source_apple_audio.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = source_apple_audio.h; path = ../../../addons/ofxAudioFeatures/libs/aubio/include/aubio/io/source_apple_audio.h; sourceTree = SOURCE_ROOT; };
+		90A0489F187A163300522E14 /* decayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decayer.h; sourceTree = "<group>"; };
+		90A048A0187A163300522E14 /* smoother.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smoother.cpp; sourceTree = "<group>"; };
+		90A048A1187A163300522E14 /* smoother.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smoother.h; sourceTree = "<group>"; };
 		90ABE975183BD4A200EC0F68 /* ofxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI.h; sourceTree = "<group>"; };
 		90ABE976183BD4A200EC0F68 /* ofxUI2DGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI2DGraph.h; sourceTree = "<group>"; };
 		90ABE977183BD4A200EC0F68 /* ofxUI2DPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI2DPad.h; sourceTree = "<group>"; };
@@ -759,6 +763,9 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				90A0489F187A163300522E14 /* decayer.h */,
+				90A048A0187A163300522E14 /* smoother.cpp */,
+				90A048A1187A163300522E14 /* smoother.h */,
 				90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */,
 				90B696DC187921CE00B5F3F9 /* colorSchemeDesigner.h */,
 				90B696D81877DC6200B5F3F9 /* audioAnalytics.cpp */,
@@ -992,6 +999,7 @@
 				4355fd81c3f9dde40b10ce943ba6e335 /* SSAOPass.cpp in Sources */,
 				813e52bd790ce4aaf527dcd4920a2e86 /* ToonPass.cpp in Sources */,
 				898cb0955cb42feb5d750a5c9e12ef6f /* VerticalTiltShifPass.cpp in Sources */,
+				90A048A2187A163300522E14 /* smoother.cpp in Sources */,
 				d752eb8ba905c25f5e7f2b300b555db0 /* ZoomBlurPass.cpp in Sources */,
 				90B696DD187921CE00B5F3F9 /* colorSchemeDesigner.cpp in Sources */,
 				90ABE9AE183BD51700EC0F68 /* tinyxml.cpp in Sources */,
