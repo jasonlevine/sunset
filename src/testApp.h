@@ -2,15 +2,11 @@
 
 #include "ofMain.h"
 
-
 #include "ofxPostProcessing.h"
 #include "ofxUI.h"
-#include "ofxBoids.h"
-
-#include "ofxOsc.h"
-#define PORT 12345
 
 #include "audioAnalytics.h"
+#include "colorSchemeDesigner.h"
 
 class testApp : public ofBaseApp{
 
@@ -22,8 +18,6 @@ public:
     void updateOSC();
     
     void drawWaves();
-    void drawSun();
-    void drawBirds();
     void drawWaveform();
     
     void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
@@ -43,53 +37,38 @@ public:
     
 	
 	audioAnalytics aa;
+    colorSchemeDesigner colorScheme;
     
     ofxPostProcessing post;
     vector<RenderPass::Ptr> renderPasses;
     
     ofCamera cam;
     
+    int state;
+    
     //waves
     vector<vector<float> > waveHistory;
-    int track, track2;
-    float bassAccum, time;
-    
-    //sun
-    ofFbo startFbo, mainFbo, finalFbo;
-    
-    //boids
-    int boidNum;
-    ofVec3f target;
-    vector<SteeredVehicle> boids;
-    
-    
+
     //UI variables
     ofxUICanvas *gui;
     
-    float noiseScale;
     float meshRotateX;
     float camX, camY, camZ;
     float lookatX, lookatY, lookatZ;
-    float sunY;
-    ofFloatColor gradientStartPre;
-    ofFloatColor gradientStart;
-    ofFloatColor gradientEnd;
-    ofFloatColor sunColor;
-    
-    //postproc vars
-    float waveStrength, noiseStrength;
-    float fboBlend;
-    
-    ofxOscReceiver receiver;
-    
 
+    //postproc vars
     bool drawPost;
     
-    //belnd
+    //blend
     ofShader shaderBlend;
     float shadeBlendMix;
     int shadeBlendMode;
     
-    ofSoundPlayer realTrack;
+    float hScale, colScale;
+    
+    float width, height;
+    
+    //ofFloatColor waveLo, waveHi, bg;
+    vector<ofFloatColor> colors;
     
 };
