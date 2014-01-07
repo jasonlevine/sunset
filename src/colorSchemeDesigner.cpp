@@ -401,23 +401,24 @@ ofFloatColor colorSchemeDesigner::getRandomColor(){
             break;
         
         case 1:
-            hue = ofRandom(1);
+            hue = ofRandom(2);
+            cout << ofRandom(1) << endl << hue << endl;
             break;
             
         case 2:
-            hue = indices[ofRandom(2)];
+            hue = indices[ofRandom(3)];
             break;
             
         case 3:
-            hue = ofRandom(3);
+            hue = ofRandom(4);
             break;
             
         case 4:
-            hue = indices[ofRandom(2)];
+            hue = indices[ofRandom(3)];
             break;
             
         case 5:
-            hue = ofRandom(3);
+            hue = ofRandom(4);
             break;
     }
     

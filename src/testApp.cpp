@@ -66,14 +66,30 @@ void testApp::update(){
     centroidSmoothed.addValue(ofMap(aa.audioFeatures[0]->spectralFeatures["centroid"], 20, 55, 0.0, 1.0));
 //    rms.decayed.addValue(ofMap(aa.amp[0], 0,
     
-    
-    colorScheme.setHue(centroidSmoothed.getMean());
+//    centroidSmoothed.getMean()
+    colorScheme.setSaturation(ofMap(aa.audioFeatures[0]->spectralFeatures["centroid"], 20, 55, 0.0, 1.0));
     colorScheme.setBrightness(aa.amp[0]);
+    colorScheme.setDistance(ofMap(aa.audioFeatures[0]->spectralFeatures["spread"], 2000, 7000, 0.0, 1.0));
 
     vector<float> wave;
     aa.taps[0]->getSamples(wave, 0);
+    wave.resize(512);
+    
     waveHistory.push_back(wave);
     if (waveHistory.size() > 120) waveHistory.erase(waveHistory.begin());
+    
+    for (int i = 0; i < wave.size(); i++) {
+        if (waveHistory[waveHistory.size()-2][i] < 0) {
+            waveHistory[waveHistory.size()-2][i] *= -1;
+        }
+        
+        if (waveHistory[waveHistory.size()-2][i] < waveHistory[waveHistory.size()-3][i] && waveHistory[waveHistory.size()-2][i] < waveHistory[waveHistory.size()-1][i]) {
+            waveHistory[waveHistory.size()-2][i] = (waveHistory[waveHistory.size()-3][i] + waveHistory[waveHistory.size()-1][i]) / 2;
+        }
+    }
+    
+    
+    
 
     waveHiHistory.push_back(colorScheme.getRandomColor());
     if (waveHiHistory.size() > 120) waveHiHistory.erase(waveHiHistory.begin());
@@ -302,13 +318,16 @@ void testApp::keyPressed(int key){
     
     switch (key) {
 
-        case '0':
         case '1':
         case '2':
         case '3':
         case '4':
         case '5':
         case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '0':
             aa.setMode(key - 48);
             break;
 
@@ -349,9 +368,9 @@ void testApp::keyPressed(int key){
             colorScheme.assignRandom(true);
             break;
             
-        case 'F':
+        case 'k':
             
-            cout << "centroid " << aa.audioFeatures[0]->spectralFeatures["centroid"] << endl;
+            cout << "kurtosis " << aa.audioFeatures[0]->spectralFeatures["kurtosis"] << endl;
             break;
         
     }
