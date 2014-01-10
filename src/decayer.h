@@ -11,7 +11,7 @@
 class decayer {
 public:
     void setDecay(float _decay) { decay = _decay; }
-    void addValue(float val) { val > value ? value = val : val *= decay; }
+    void addValue(float val) { (val > value) ? value = val : val *= decay; }
     void update() { value *= decay; }
     float getValue() { return value; }
     

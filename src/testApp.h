@@ -7,7 +7,7 @@
 
 #include "audioAnalytics.h"
 #include "colorSchemeDesigner.h"
-#include "smoother.h"
+//#include "smoother.h"
 #include "decayer.h"
 
 class testApp : public ofBaseApp{
@@ -44,6 +44,9 @@ public:
     ofxPostProcessing post;
     vector<RenderPass::Ptr> renderPasses;
     
+    
+    decayer camYDecayed;
+    smoother camYSmoothed;
     ofCamera cam;
     
     int state;
@@ -76,7 +79,7 @@ public:
     //ofFloatColor waveLo, waveHi, bg;
     vector<ofFloatColor> colors;
     
-    smoother centroidSmoothed;
-    decayer rmsDecayed;
+    ofLight pointLight;
+    ofMaterial material;
     
 };

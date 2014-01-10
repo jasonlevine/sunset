@@ -26,14 +26,21 @@ void testApp::setup(){
         vector<float> wave;
         wave.assign(512, 0);
         waveHistory.push_back(wave);
+        waveLoHistory.push_back(ofFloatColor(0.3, 0.5, 0.3));
+        waveHiHistory.push_back(ofFloatColor(0.8, 0.5, 0.7));
     }
+    
+//    waveLoHistory[15].set(1.0,0.0,0.0);
+//    waveHiHistory[15].set(1.0,0.0,0.0);
+//    
     
     width = 1920;
     height = 1080;
     
     // Setup post-processing chain
     post.init(width, height);
-    post.createPass<GodRaysPass>()->setEnabled(true);
+//    post.createPass<GodRaysPass>()->setEnabled(true);
+//    post.createPass<DofPass>()->setEnabled(true);
 
     
     
@@ -55,21 +62,37 @@ void testApp::setup(){
     
     state = 0;
     
-    centroidSmoothed.setNumPValues(60);
-    rmsDecayed.setDecay(0.95);
+    camYDecayed.setDecay(0.995);
+    camYSmoothed.setNumPValues(35);
+    
+    
+    // turn on smooth lighting //
+    ofSetSmoothLighting(true);
+
+	
+    
+    // Point lights emit light in all directions //
+    // set the diffuse color, color reflected from the light source //
+    pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
+    
+    // specular color, the highlight/shininess color //
+	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
+    pointLight.setPosition(cam.screenToWorld(ofVec3f(ofGetWidth()/2, ofGetHeight()/2, 0)));
+    
+    // shininess is a value between 0 - 128, 128 being the most shiny //
+	material.setShininess( 64 );
+    material.setAmbientColor(colorScheme.colorScheme[0][0]);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     aa.updateAnalytics();
     
-    centroidSmoothed.addValue(ofMap(aa.audioFeatures[0]->spectralFeatures["centroid"], 20, 55, 0.0, 1.0));
-//    rms.decayed.addValue(ofMap(aa.amp[0], 0,
-    
-//    centroidSmoothed.getMean()
-    colorScheme.setSaturation(ofMap(aa.audioFeatures[0]->spectralFeatures["centroid"], 20, 55, 0.0, 1.0));
-    colorScheme.setBrightness(aa.amp[0]);
-    colorScheme.setDistance(ofMap(aa.audioFeatures[0]->spectralFeatures["spread"], 2000, 7000, 0.0, 1.0));
+
+//    colorScheme.setHue(ofMap(aa.pitch[0], 0, aa.maxPitch[0], 0.0, 1.0));
+    colorScheme.setSaturation(ofMap(aa.centroidSmoothed.getMean(), 30, 55, 0.0, 1.0));
+    colorScheme.setBrightness(aa.ampSmoothed.getMean());
+//    colorScheme.setDistance(ofMap(aa.audioFeatures[0]->spectralFeatures["skew"], 2000, 7000, 0.0, 1.0));
 
     vector<float> wave;
     aa.taps[0]->getSamples(wave, 0);
@@ -79,15 +102,20 @@ void testApp::update(){
     if (waveHistory.size() > 120) waveHistory.erase(waveHistory.begin());
     
     for (int i = 0; i < wave.size(); i++) {
-        if (waveHistory[waveHistory.size()-2][i] < 0) {
-            waveHistory[waveHistory.size()-2][i] *= -1;
-        }
-        
-        if (waveHistory[waveHistory.size()-2][i] < waveHistory[waveHistory.size()-3][i] && waveHistory[waveHistory.size()-2][i] < waveHistory[waveHistory.size()-1][i]) {
-            waveHistory[waveHistory.size()-2][i] = (waveHistory[waveHistory.size()-3][i] + waveHistory[waveHistory.size()-1][i]) / 2;
+        if (waveHistory[waveHistory.size()-1][i] < 0) {
+            waveHistory[waveHistory.size()-1][i] = 0;//*= -1;
         }
     }
+
     
+    for (int i = 0; i < wave.size(); i++) {
+        smoother heightSmooth;
+        heightSmooth.setNumPValues(2);
+        for (int j = waveHistory.size()-10; j < waveHistory.size(); j++) {
+            heightSmooth.addValue(waveHistory[j][i]);
+            waveHistory[j][i] = heightSmooth.getMean();
+        }
+    }
     
     
 
@@ -97,11 +125,20 @@ void testApp::update(){
     waveLoHistory.push_back(colorScheme.getRandomColor());
     if (waveLoHistory.size() > 120) waveLoHistory.erase(waveLoHistory.begin());
     
+
+
+    
+    
     gui->update();
+    
+    camYDecayed.addValue(waveHistory[35][256] * hScale * 180 + 100);
+    camYDecayed.update();
+    camYSmoothed.addValue(camYDecayed.getValue());
+    camY = camYSmoothed.getMean();
+    
     
     cam.setPosition(camX, camY, camZ);
     cam.lookAt(ofVec3f(lookatX, lookatY, lookatZ));
-    
     
 }
 
@@ -115,9 +152,17 @@ void testApp::draw(){
 //    cam.begin();
     if (state == 0) {
         post.begin(cam);
-        ofBackground(25); //colorScheme.colorScheme[0][0]
+        // enable lighting //
+        ofEnableLighting();
+        // the position of the light must be updated every frame,
+        // call enable() so that it can update itself //
+        pointLight.enable();
+        material.begin();
+        ofBackground(15); //colorScheme.colorScheme[0][0]
         drawWaves();
         post.end();
+        material.end();
+        ofDisableLighting();
     }
     else if (state == 1) {
         colorScheme.draw();
@@ -145,8 +190,6 @@ void testApp::drawWaves(){
         ofMesh mesh;
         
         for (int y = 0; y < height; y++){
-//            ofFloatColor waveHi = colorScheme.getRandomColor();
-//            ofFloatColor waveLo = colorScheme.getRandomColor();
             for (int x = 0; x<width; x++){
                 float h = waveHistory[y][x];
                 mesh.addVertex(ofPoint(x, h * hScale, y));
