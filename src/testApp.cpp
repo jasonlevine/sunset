@@ -350,6 +350,8 @@ void testApp::setupGUI(){
     gui->addSlider("lookatY", -500, 500, &lookatY, length-xInit, dim);
     gui->addSlider("lookatZ", -600, 600, &lookatZ, length-xInit, dim);;
 
+    
+    gui->toggleVisible();
     ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);
 }
 
@@ -405,11 +407,9 @@ void testApp::keyPressed(int key){
             
         case 'g':
             gui->toggleVisible();
-            break;
-            
-        case 'G':
             colorScheme.gui->toggleVisible();
             break;
+            
             
         case 's':
             state = (state + 1) % 3;
