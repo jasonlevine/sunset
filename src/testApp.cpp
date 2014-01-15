@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -30,19 +31,14 @@ void testApp::setup(){
         waveHiHistory.push_back(ofFloatColor(0.8, 0.5, 0.7));
     }
     
-//    waveLoHistory[15].set(1.0,0.0,0.0);
-//    waveHiHistory[15].set(1.0,0.0,0.0);
-//    
+  
     
     width = 1920;
     height = 1080;
     
     // Setup post-processing chain
     post.init(width, height);
-//    post.createPass<GodRaysPass>()->setEnabled(true);
-//    post.createPass<DofPass>()->setEnabled(true);
-
-    
+    post.createPass<GodRaysPass>()->setEnabled(true);
     
     renderPasses = post.getPasses();
 
@@ -62,8 +58,8 @@ void testApp::setup(){
     
     state = 0;
     
-    camYDecayed.setDecay(0.995);
-    camYSmoothed.setNumPValues(35);
+    camYDecayed.setDecay(0.99);
+    camYSmoothed.setNumPValues(25);
     
     
     // turn on smooth lighting //
@@ -73,15 +69,18 @@ void testApp::setup(){
     
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //
-    pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
+    pointLight.setAmbientColor( colorScheme.colorScheme[0][2]);
+    pointLight.setDiffuseColor( colorScheme.colorScheme[0][1]);
     
     // specular color, the highlight/shininess color //
 	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
-    pointLight.setPosition(cam.screenToWorld(ofVec3f(ofGetWidth()/2, ofGetHeight()/2, 0)));
+    pointLight.setPosition(0, 300, 0);
     
     // shininess is a value between 0 - 128, 128 being the most shiny //
-	material.setShininess( 64 );
+	material.setShininess( 128 );
     material.setAmbientColor(colorScheme.colorScheme[0][0]);
+    
+    useLights = true;
 }
 
 //--------------------------------------------------------------
@@ -89,10 +88,10 @@ void testApp::update(){
     aa.updateAnalytics();
     
 
-//    colorScheme.setHue(ofMap(aa.pitch[0], 0, aa.maxPitch[0], 0.0, 1.0));
+//    colorScheme.setHue(ofMap(aa.kurtosisSmoothed.getMean(), 0, aa.maxKurtosis[0], 0.0, 1.0));
     colorScheme.setSaturation(ofMap(aa.centroidSmoothed.getMean(), 30, 55, 0.0, 1.0));
     colorScheme.setBrightness(aa.ampSmoothed.getMean());
-//    colorScheme.setDistance(ofMap(aa.audioFeatures[0]->spectralFeatures["skew"], 2000, 7000, 0.0, 1.0));
+    colorScheme.setDistance(ofMap(aa.pitchSmoothed.getMedian(), 50, 90, 0.0, 0.5));
 
     vector<float> wave;
     aa.taps[0]->getSamples(wave, 0);
@@ -131,7 +130,7 @@ void testApp::update(){
     
     gui->update();
     
-    camYDecayed.addValue(waveHistory[35][256] * hScale * 180 + 100);
+    camYDecayed.addValue(waveHistory[45][256] * hScale * 180 + 100);
     camYDecayed.update();
     camYSmoothed.addValue(camYDecayed.getValue());
     camY = camYSmoothed.getMean();
@@ -139,6 +138,10 @@ void testApp::update(){
     
     cam.setPosition(camX, camY, camZ);
     cam.lookAt(ofVec3f(lookatX, lookatY, lookatZ));
+    
+    pointLight.setPosition(camX, camY, -camZ);
+    pointLight.setAmbientColor( colorScheme.colorScheme[0][2]);
+    pointLight.setDiffuseColor( colorScheme.colorScheme[0][1]);
     
 }
 
@@ -148,21 +151,32 @@ void testApp::draw(){
     
     ofEnableAlphaBlending();
     
-//    mainFbo.begin();
-//    cam.begin();
     if (state == 0) {
         post.begin(cam);
+        if (useLights) {
         // enable lighting //
         ofEnableLighting();
         // the position of the light must be updated every frame,
         // call enable() so that it can update itself //
         pointLight.enable();
         material.begin();
-        ofBackground(15); //colorScheme.colorScheme[0][0]
+        }
+        ofFloatColor bgColor = colorScheme.colorScheme[0][0];
+        float complementHue = bgColor.getHue() + 0.5;
+        if (complementHue > 1.0) complementHue-=1.0;
+        bgColor.setHue(complementHue);
+        bgColor.setSaturation(bgColor.getSaturation() - 0.2);
+//        cout << bgColor.getHue() << endl;
+        ofBackground(bgColor); //colorScheme.colorScheme[0][0]
+//        ofBackground(25);
+//        ofDrawSphere(0, 150, 0, 25);
         drawWaves();
+        
+        if (useLights) {
+            material.end();
+            ofDisableLighting();
+        }
         post.end();
-        material.end();
-        ofDisableLighting();
     }
     else if (state == 1) {
         colorScheme.draw();
@@ -170,10 +184,7 @@ void testApp::draw(){
     else if (state == 2) {
         aa.drawAnalytics();
     }
-//    cam.end();
-//    mainFbo.end();
-//    post.process(mainFbo);
-//    }
+
     
 
     ofDisableAlphaBlending();
@@ -225,12 +236,12 @@ void testApp::drawWaves(){
             }
         }
         
-
+        meshUtils.calcNormals(mesh, true);
         //        ofDrawAxis(100);
         ofPushMatrix();
         ofRotateX(meshRotateX);
         ofRotateY(180);
-        ofScale(7,180,10);
+        ofScale(7,180,20);
         ofTranslate(-width/2, 0, -height/2);
         mesh.draw();
         ofPopMatrix();
@@ -312,7 +323,7 @@ void testApp::setupGUI(){
     meshRotateX = 0.0;
     camX = 0;
     camY = 150;
-    camZ = 600;
+    camZ = 1200;
     
     float dim = 16;
 	float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
@@ -324,9 +335,10 @@ void testApp::setupGUI(){
     gui->addSpacer(length-xInit, 1);
     gui->addSlider("hScale", 1.0, 20.0, &hScale, length-xInit, dim);
     gui->addSlider("colScale", 1.0, 10.0, &colScale, length-xInit, dim);
-    gui->addLabelToggle("GodRays", false);
+    gui->addLabelToggle("Bloom", true);
+    gui->addLabelToggle("GodRays", true);
     gui->addSpacer(length-xInit, 1);
-    gui->addSlider("meshRotateX", -90.0, 90, &meshRotateX, length-xInit, dim);
+//    gui->addSlider("meshRotateX", -90.0, 90, &meshRotateX, length-xInit, dim);
     gui->addSlider("camX", -260, 260, &camX, length-xInit, dim);
     gui->addSlider("camY", 0.0, 500, &camY, length-xInit, dim);
     gui->addSlider("camZ", -600, 600, &camZ, length-xInit, dim);
@@ -343,11 +355,18 @@ void testApp::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName();
     int kind = e.widget->getKind();
     
-    if(name == "GodRays") //kind == OFX_UI_WIDGET_LABELBUTTON
+    if(name == "Bloom") //kind == OFX_UI_WIDGET_LABELBUTTON
     {
         ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
         post[0]->setEnabled(button->getValue());
     }
+    
+    if(name == "GodRays") //kind == OFX_UI_WIDGET_LABELBUTTON
+    {
+        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+        post[1]->setEnabled(button->getValue());
+    }
+
 }
 
 
@@ -414,6 +433,10 @@ void testApp::keyPressed(int key){
         case 'k':
             
             cout << "kurtosis " << aa.audioFeatures[0]->spectralFeatures["kurtosis"] << endl;
+            break;
+            
+        case 'l':
+            useLights = !useLights;
             break;
         
     }

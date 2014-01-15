@@ -4,6 +4,8 @@
 
 #include "ofxPostProcessing.h"
 #include "ofxUI.h"
+#include "ofxMeshUtils.h"
+
 
 #include "audioAnalytics.h"
 #include "colorSchemeDesigner.h"
@@ -56,6 +58,8 @@ public:
     vector<ofFloatColor> waveHiHistory;
     vector<ofFloatColor> waveLoHistory;
     
+    ofxMeshUtils meshUtils;
+    
 
     //UI variables
     ofxUICanvas *gui;
@@ -81,5 +85,7 @@ public:
     
     ofLight pointLight;
     ofMaterial material;
+    
+    bool useLights;
     
 };

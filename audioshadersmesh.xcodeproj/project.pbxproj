@@ -389,7 +389,8 @@
 				69f4b5e1f93c0fe22725cce5ddf6fbdd /* ofxAudioFeaturesChannel.h */,
 			);
 			name = src;
-			sourceTree = "<group>";
+			path = "/Users/jasonlevine/Code/of_v0.8.0_osx_release/apps/just you/audioshadersmesh";
+			sourceTree = "<absolute>";
 		};
 		03d682a8bcc2490db16283b73caa0b71 /* onset */ = {
 			isa = PBXGroup;
