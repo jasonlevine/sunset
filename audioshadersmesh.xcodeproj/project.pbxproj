@@ -43,9 +43,9 @@
 		90ABE9AF183BD51700EC0F68 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9A9183BD51700EC0F68 /* tinyxmlerror.cpp */; };
 		90ABE9B0183BD51700EC0F68 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AA183BD51700EC0F68 /* tinyxmlparser.cpp */; };
 		90ABE9B1183BD51700EC0F68 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AC183BD51700EC0F68 /* ofxXmlSettings.cpp */; };
-		90B696DA1877DC6200B5F3F9 /* audioAnalytics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B696D81877DC6200B5F3F9 /* audioAnalytics.cpp */; };
 		90B696DD187921CE00B5F3F9 /* colorSchemeDesigner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */; };
 		90C3DD4B1886664F007F7DB5 /* ofxMeshUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */; };
+		90C3DD4E18866B59007F7DB5 /* audioAnalytics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C3DD4C18866B59007F7DB5 /* audioAnalytics.cpp */; };
 		9177f62acd8b721065a083f069ca8361 /* ofxAudioDeviceControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = ae197401a06411e94419ee7963ba271f /* ofxAudioDeviceControl.mm */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -262,13 +262,13 @@
 		90ABE9AA183BD51700EC0F68 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		90ABE9AC183BD51700EC0F68 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		90ABE9AD183BD51700EC0F68 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
-		90B696D81877DC6200B5F3F9 /* audioAnalytics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audioAnalytics.cpp; path = ../../../myApps/CLOUDS/src/audioAnalytics.cpp; sourceTree = "<group>"; };
-		90B696D91877DC6200B5F3F9 /* audioAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audioAnalytics.h; path = ../../../myApps/CLOUDS/src/audioAnalytics.h; sourceTree = "<group>"; };
 		90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = colorSchemeDesigner.cpp; sourceTree = "<group>"; };
 		90B696DC187921CE00B5F3F9 /* colorSchemeDesigner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorSchemeDesigner.h; sourceTree = "<group>"; };
 		90C3DD471886664F007F7DB5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMeshUtils.cpp; sourceTree = "<group>"; };
 		90C3DD4A1886664F007F7DB5 /* ofxMeshUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMeshUtils.h; sourceTree = "<group>"; };
+		90C3DD4C18866B59007F7DB5 /* audioAnalytics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audioAnalytics.cpp; sourceTree = "<group>"; };
+		90C3DD4D18866B59007F7DB5 /* audioAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audioAnalytics.h; sourceTree = "<group>"; };
 		91821b92c0988056ec2f9256cc1bfe47 /* ofxAudioFeaturesChannel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAudioFeaturesChannel.cpp; path = ../../../addons/ofxAudioFeatures/src/ofxAudioFeaturesChannel.cpp; sourceTree = SOURCE_ROOT; };
 		91f91c3bead0b3c2b92bb9a56f61c300 /* DofAltPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = DofAltPass.cpp; path = ../../../addons/ofxPostProcessing/src/DofAltPass.cpp; sourceTree = SOURCE_ROOT; };
 		921304abbee9bbad134368987c452278 /* ofxAudioUnitInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAudioUnitInput.cpp; path = ../../../addons/ofxAudioUnit/src/ofxAudioUnitInput.cpp; sourceTree = SOURCE_ROOT; };
@@ -589,11 +589,11 @@
 		90A048A3187B958300522E14 /* audioAnalytics */ = {
 			isa = PBXGroup;
 			children = (
+				90C3DD4C18866B59007F7DB5 /* audioAnalytics.cpp */,
+				90C3DD4D18866B59007F7DB5 /* audioAnalytics.h */,
 				90A0489F187A163300522E14 /* decayer.h */,
 				90A048A0187A163300522E14 /* smoother.cpp */,
 				90A048A1187A163300522E14 /* smoother.h */,
-				90B696D81877DC6200B5F3F9 /* audioAnalytics.cpp */,
-				90B696D91877DC6200B5F3F9 /* audioAnalytics.h */,
 				90A048A4187B95EA00522E14 /* scrollingGraph.cpp */,
 				90A048A5187B95EA00522E14 /* scrollingGraph.h */,
 			);
@@ -1016,6 +1016,7 @@
 				79308b05c4d0a9b9e404ffed42f5d191 /* BleachBypassPass.cpp in Sources */,
 				3a499904889c490dcf533c6e4582d0a5 /* BloomPass.cpp in Sources */,
 				dfb75f1ebe744a456ac999f454c8b08a /* ContrastPass.cpp in Sources */,
+				90C3DD4E18866B59007F7DB5 /* audioAnalytics.cpp in Sources */,
 				90ABE9AF183BD51700EC0F68 /* tinyxmlerror.cpp in Sources */,
 				778dca6792476e5b9f57f1758fec4ffc /* ConvolutionPass.cpp in Sources */,
 				b58a80b21a55e254f48e6e13b3602ddf /* DofAltPass.cpp in Sources */,
@@ -1025,7 +1026,6 @@
 				33db731e964056d7e35604a7faaf51d8 /* FakeSSSPass.cpp in Sources */,
 				04c13eea813a786cc1d8137adc963df1 /* FxaaPass.cpp in Sources */,
 				6a505eae8088949a9180ffe7904a22b5 /* GodRaysPass.cpp in Sources */,
-				90B696DA1877DC6200B5F3F9 /* audioAnalytics.cpp in Sources */,
 				28afd6fa9b9c885afd9ff1c76fa24dde /* HorizontalTiltShifPass.cpp in Sources */,
 				884cb4d049e35c51e949a5650d4f48df /* KaleidoscopePass.cpp in Sources */,
 				7ab51f1099dc01486d18faf6a8265b91 /* LimbDarkeningPass.cpp in Sources */,
