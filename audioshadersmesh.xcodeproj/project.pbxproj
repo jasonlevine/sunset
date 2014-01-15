@@ -45,6 +45,7 @@
 		90ABE9B1183BD51700EC0F68 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AC183BD51700EC0F68 /* ofxXmlSettings.cpp */; };
 		90B696DA1877DC6200B5F3F9 /* audioAnalytics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B696D81877DC6200B5F3F9 /* audioAnalytics.cpp */; };
 		90B696DD187921CE00B5F3F9 /* colorSchemeDesigner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */; };
+		90C3DD4B1886664F007F7DB5 /* ofxMeshUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */; };
 		9177f62acd8b721065a083f069ca8361 /* ofxAudioDeviceControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = ae197401a06411e94419ee7963ba271f /* ofxAudioDeviceControl.mm */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -265,6 +266,9 @@
 		90B696D91877DC6200B5F3F9 /* audioAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audioAnalytics.h; path = ../../../myApps/CLOUDS/src/audioAnalytics.h; sourceTree = "<group>"; };
 		90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = colorSchemeDesigner.cpp; sourceTree = "<group>"; };
 		90B696DC187921CE00B5F3F9 /* colorSchemeDesigner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorSchemeDesigner.h; sourceTree = "<group>"; };
+		90C3DD471886664F007F7DB5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMeshUtils.cpp; sourceTree = "<group>"; };
+		90C3DD4A1886664F007F7DB5 /* ofxMeshUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMeshUtils.h; sourceTree = "<group>"; };
 		91821b92c0988056ec2f9256cc1bfe47 /* ofxAudioFeaturesChannel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAudioFeaturesChannel.cpp; path = ../../../addons/ofxAudioFeatures/src/ofxAudioFeaturesChannel.cpp; sourceTree = SOURCE_ROOT; };
 		91f91c3bead0b3c2b92bb9a56f61c300 /* DofAltPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = DofAltPass.cpp; path = ../../../addons/ofxPostProcessing/src/DofAltPass.cpp; sourceTree = SOURCE_ROOT; };
 		921304abbee9bbad134368987c452278 /* ofxAudioUnitInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAudioUnitInput.cpp; path = ../../../addons/ofxAudioUnit/src/ofxAudioUnitInput.cpp; sourceTree = SOURCE_ROOT; };
@@ -682,6 +686,25 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		90C3DD461886664F007F7DB5 /* ofxMeshUtils */ = {
+			isa = PBXGroup;
+			children = (
+				90C3DD471886664F007F7DB5 /* README.md */,
+				90C3DD481886664F007F7DB5 /* src */,
+			);
+			name = ofxMeshUtils;
+			path = ../../../addons/ofxMeshUtils;
+			sourceTree = "<group>";
+		};
+		90C3DD481886664F007F7DB5 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */,
+				90C3DD4A1886664F007F7DB5 /* ofxMeshUtils.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		9360d34d90ea59a50af2804ff846484b /* ofxAudioUnit */ = {
 			isa = PBXGroup;
 			children = (
@@ -707,6 +730,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				90C3DD461886664F007F7DB5 /* ofxMeshUtils */,
 				90ABE9A5183BD51700EC0F68 /* ofxXmlSettings */,
 				90ABE974183BD4A200EC0F68 /* ofxUI */,
 				0abdfc5b77566ffaf1610b8a7164e025 /* ofxAudioFeatures */,
@@ -972,6 +996,7 @@
 				87b337624802e70c0bdb11f33d9e5da5 /* ofxAudioUnit.cpp in Sources */,
 				2d5ff7f2acfb45212bc7739d19593e1b /* ofxAudioUnitCocoaUtilties.mm in Sources */,
 				2b33b0211e062cb61c7faef9e99e4eff /* ofxAudioUnitDSPNode.cpp in Sources */,
+				90C3DD4B1886664F007F7DB5 /* ofxMeshUtils.cpp in Sources */,
 				0e826ec50f9f913c3159c2f77faa5583 /* ofxAudioUnitFftNode.cpp in Sources */,
 				f37393707bbd7e49a1055ffbaf2d252d /* ofxAudioUnitFilePlayer.cpp in Sources */,
 				f09ec3f89cf64e415784bb3205db80da /* ofxAudioUnitHardwareUtils.cpp in Sources */,

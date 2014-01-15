@@ -37,7 +37,7 @@ void colorSchemeDesigner::setup(){
     float dim = 32;
     float length = xOffset-xInit;
     
-    gui = new ofxUICanvas(0, 0, length+xInit, ofGetHeight());
+    gui = new ofxUICanvas(255+32, 0, length+xInit, ofGetHeight());
     
     gui->addSlider("primary hue", 0.0, 1.0, &hue, length-xInit, dim);
     gui->addSlider("primary brightness", 0.0, 1.0, &brightness, length-xInit, dim);

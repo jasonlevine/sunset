@@ -4,6 +4,8 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
+    ofSetFrameRate(30);
+    
     aa.playStems(0);
     colorScheme.setup();
     colorScheme.gui->setVisible(false);
@@ -325,6 +327,8 @@ void testApp::setupGUI(){
     camY = 150;
     camZ = 1200;
     
+    hScale = 20;
+    
     float dim = 16;
 	float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
     float length = 255-xInit;
@@ -335,8 +339,8 @@ void testApp::setupGUI(){
     gui->addSpacer(length-xInit, 1);
     gui->addSlider("hScale", 1.0, 20.0, &hScale, length-xInit, dim);
     gui->addSlider("colScale", 1.0, 10.0, &colScale, length-xInit, dim);
-    gui->addLabelToggle("Bloom", true);
-    gui->addLabelToggle("GodRays", true);
+//    gui->addLabelToggle("Bloom", true);
+//    gui->addLabelToggle("GodRays", true);
     gui->addSpacer(length-xInit, 1);
 //    gui->addSlider("meshRotateX", -90.0, 90, &meshRotateX, length-xInit, dim);
     gui->addSlider("camX", -260, 260, &camX, length-xInit, dim);
@@ -355,17 +359,17 @@ void testApp::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName();
     int kind = e.widget->getKind();
     
-    if(name == "Bloom") //kind == OFX_UI_WIDGET_LABELBUTTON
-    {
-        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
-        post[0]->setEnabled(button->getValue());
-    }
-    
-    if(name == "GodRays") //kind == OFX_UI_WIDGET_LABELBUTTON
-    {
-        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
-        post[1]->setEnabled(button->getValue());
-    }
+//    if(name == "Bloom") //kind == OFX_UI_WIDGET_LABELBUTTON
+//    {
+//        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+//        post[0]->setEnabled(button->getValue());
+//    }
+//    
+//    if(name == "GodRays") //kind == OFX_UI_WIDGET_LABELBUTTON
+//    {
+//        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
+//        post[1]->setEnabled(button->getValue());
+//    }
 
 }
 
