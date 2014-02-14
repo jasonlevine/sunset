@@ -5,36 +5,37 @@
 void testApp::setup(){
 
     ofSetFrameRate(30);
+    ofSetDepthTest(true);
+    state = 0;
     
     aa.playStems(0);
-    colorScheme.setup();
-    colorScheme.gui->setVisible(false);
+    cs.setup();
+    cs.gui->setVisible(false);
     
     for (int i = 0; i < 13; i++) {
         colors.push_back(ofFloatColor(ofRandomuf()));
     }
     
     for (int i = 0; i < 13; i++) {
-         colorScheme.addColorRef(&colors[i]);
+         cs.addColorRef(&colors[i]);
     }
 
-    colorScheme.assignRandom(true);
+    cs.assignRandom(true);
     
-    ofSetDepthTest(true);
-
+    tm.setup(&aa, &cs);
     
-    setupGUI();
     
-    for (int i = 0; i < 120; i++) {
-        vector<float> wave;
-        wave.assign(512, 0);
-        waveHistory.push_back(wave);
-        waveLoHistory.push_back(ofFloatColor(0.3, 0.5, 0.3));
-        waveHiHistory.push_back(ofFloatColor(0.8, 0.5, 0.7));
-    }
+//waves
+//    for (int i = 0; i < 120; i++) {
+//        vector<float> wave;
+//        wave.assign(512, 0);
+//        waveHistory.push_back(wave);
+//        waveLoHistory.push_back(ofFloatColor(0.3, 0.5, 0.3));
+//        waveHiHistory.push_back(ofFloatColor(0.8, 0.5, 0.7));
+//    }
     
   
-    
+//post
     width = 1920;
     height = 1080;
     
@@ -43,26 +44,20 @@ void testApp::setup(){
     post.createPass<GodRaysPass>()->setEnabled(true);
     
     renderPasses = post.getPasses();
+//    drawPost = false;
 
 
-
+    //cam
     lookatX = 0;
     lookatY = 0;
     lookatZ = -600;
     
-    drawPost = false;
-    
-    
-    ///blend
-    shaderBlend.load("shaders/blendShader");
-    shadeBlendMix = 0.5;
-    shadeBlendMode = 1;
-    
-    state = 0;
     
     camYDecayed.setDecay(0.99);
     camYSmoothed.setNumPValues(25);
     
+    
+    //lights
     
     // turn on smooth lighting //
     ofSetSmoothLighting(true);
@@ -71,18 +66,22 @@ void testApp::setup(){
     
     // Point lights emit light in all directions //
     // set the diffuse color, color reflected from the light source //
-    pointLight.setAmbientColor( colorScheme.colorScheme[0][2]);
-    pointLight.setDiffuseColor( colorScheme.colorScheme[0][1]);
+    pointLight.setAmbientColor( cs.colorScheme[0][2]);
+    pointLight.setDiffuseColor( cs.colorScheme[0][1]);
     
     // specular color, the highlight/shininess color //
 	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
-    pointLight.setPosition(0, 300, 0);
+//    pointLight.setPosition(0, 300, 0);
+    pointLight.setPosition(0.5, 0.5, 0.5);
     
     // shininess is a value between 0 - 128, 128 being the most shiny //
 	material.setShininess( 128 );
-    material.setAmbientColor(colorScheme.colorScheme[0][0]);
+    material.setAmbientColor(cs.colorScheme[0][0]);
     
     useLights = true;
+    
+    
+    setupGUI();
 }
 
 //--------------------------------------------------------------
@@ -90,60 +89,38 @@ void testApp::update(){
     aa.updateAnalytics();
     
 
-//    colorScheme.setHue(ofMap(aa.kurtosisSmoothed.getMean(), 0, aa.maxKurtosis[0], 0.0, 1.0));
-    colorScheme.setSaturation(ofMap(aa.centroidSmoothed.getMean(), 30, 55, 0.0, 1.0));
-    colorScheme.setBrightness(aa.ampSmoothed.getMean());
-    colorScheme.setDistance(ofMap(aa.pitchSmoothed.getMedian(), 50, 90, 0.0, 0.5));
+//    cs.setHue(ofMap(aa.kurtosisSmoothed.getMean(), 0, aa.maxKurtosis[0], 0.0, 1.0));
+    cs.setSaturation(ofMap(aa.centroidSmoothed.getMean(), 30, 55, 0.0, 1.0));
+    cs.setBrightness(aa.ampSmoothed.getMean());
+    cs.setDistance(ofMap(aa.pitchSmoothed.getMedian(), 50, 90, 0.0, 0.5));
 
-    vector<float> wave;
-    aa.taps[0]->getSamples(wave, 0);
-    wave.resize(512);
+    tm.update();
     
-    waveHistory.push_back(wave);
-    if (waveHistory.size() > 120) waveHistory.erase(waveHistory.begin());
-    
-    for (int i = 0; i < wave.size(); i++) {
-        if (waveHistory[waveHistory.size()-1][i] < 0) {
-            waveHistory[waveHistory.size()-1][i] = 0;//*= -1;
-        }
-    }
 
     
-    for (int i = 0; i < wave.size(); i++) {
-        smoother heightSmooth;
-        heightSmooth.setNumPValues(2);
-        for (int j = waveHistory.size()-10; j < waveHistory.size(); j++) {
-            heightSmooth.addValue(waveHistory[j][i]);
-            waveHistory[j][i] = heightSmooth.getMean();
-        }
-    }
+//    if (waveHistory[10][camX + 255] < waveHistory[5][camX + 256]) {
+//        camX--;
+//    }
+//    else if (waveHistory[10][camX + 257] < waveHistory[5][camX + 256]) {
+//        camX++;
+//    }
     
     
 
-    waveHiHistory.push_back(colorScheme.getRandomColor());
-    if (waveHiHistory.size() > 120) waveHiHistory.erase(waveHiHistory.begin());
     
-    waveLoHistory.push_back(colorScheme.getRandomColor());
-    if (waveLoHistory.size() > 120) waveLoHistory.erase(waveLoHistory.begin());
-    
-
-
-    
-    
-    gui->update();
-    
-    camYDecayed.addValue(waveHistory[45][256] * hScale * 180 + 100);
+    camYDecayed.addValue(tm.waveHistory[45][camX + 256] * 20 * 180 + 100);
     camYDecayed.update();
     camYSmoothed.addValue(camYDecayed.getValue());
     camY = camYSmoothed.getMean();
     
-    
     cam.setPosition(camX, camY, camZ);
     cam.lookAt(ofVec3f(lookatX, lookatY, lookatZ));
     
-    pointLight.setPosition(camX, camY, -camZ);
-    pointLight.setAmbientColor( colorScheme.colorScheme[0][2]);
-    pointLight.setDiffuseColor( colorScheme.colorScheme[0][1]);
+//    pointLight.setPosition(camX, camY, -camZ);
+    pointLight.setAmbientColor( cs.colorScheme[0][2]);
+    pointLight.setDiffuseColor( cs.colorScheme[0][1]);
+    
+    gui->update();
     
 }
 
@@ -156,23 +133,19 @@ void testApp::draw(){
     if (state == 0) {
         post.begin(cam);
         if (useLights) {
-        // enable lighting //
-        ofEnableLighting();
-        // the position of the light must be updated every frame,
-        // call enable() so that it can update itself //
-        pointLight.enable();
-        material.begin();
+            ofEnableLighting();
+            pointLight.enable();
+            material.begin();
         }
-        ofFloatColor bgColor = colorScheme.colorScheme[0][0];
+        ofFloatColor bgColor = cs.colorScheme[0][0];
         float complementHue = bgColor.getHue() + 0.5;
         if (complementHue > 1.0) complementHue-=1.0;
         bgColor.setHue(complementHue);
         bgColor.setSaturation(bgColor.getSaturation() - 0.2);
-//        cout << bgColor.getHue() << endl;
-        ofBackground(bgColor); //colorScheme.colorScheme[0][0]
-//        ofBackground(25);
-//        ofDrawSphere(0, 150, 0, 25);
-        drawWaves();
+
+        ofBackground(bgColor);
+
+        tm.draw();
         
         if (useLights) {
             material.end();
@@ -181,7 +154,7 @@ void testApp::draw(){
         post.end();
     }
     else if (state == 1) {
-        colorScheme.draw();
+        cs.draw();
     }
     else if (state == 2) {
         aa.drawAnalytics();
@@ -193,64 +166,6 @@ void testApp::draw(){
 
 }
 
-//--------------------------------------------------------------
-void testApp::drawWaves(){
-    
-    if (waveHistory[0].size() > 0) {
-        int width = 512;
-        int height = waveHistory.size();
-        
-        ofMesh mesh;
-        
-        for (int y = 0; y < height; y++){
-            for (int x = 0; x<width; x++){
-                float h = waveHistory[y][x];
-                mesh.addVertex(ofPoint(x, h * hScale, y));
-                
-                float col = h * colScale;
-                mesh.addColor(waveHiHistory[y] * col + waveLoHistory[y] * (1.0 - col));
-                
-                //float h = (waveHistory[y][x] + 1.0) / 2;
-//                float r, g, b;
-//                r = h > 0.4 ? (h - 0.4) * 2: 0.0; // + aa.amp[3]
-//                g = r; //waveHistory2[y][x];
-//                b = h;
-//                float dist = float(abs(width / 2 - x)) / width;
-//                float distSq = dist * dist;
-//                ofFloatColor gradient = gradientStart * (1.0 - dist) + gradientEnd * dist;
-//                float yDist = float(y) / height;
-//                float yDistSq = yDist * yDist;
-//                mesh.addColor(ofFloatColor(r,g,b) * (1.0 - yDistSq) + gradient * yDistSq);  // add a color at that vertex
-            }
-        }
-        
-        // now it's important to make sure that each vertex is correctly connected with the
-        // other vertices around it. This is done using indices, which you can set up like so:
-        for (int y = 0; y < height-1; y++){
-            for (int x = 0; x < width-1; x++){
-                mesh.addIndex(x+y*width);       // 0
-                mesh.addIndex((x+1)+y*width);     // 1
-                mesh.addIndex(x+(y+1)*width);     // 10
-                
-                mesh.addIndex((x+1)+y*width);     // 1
-                mesh.addIndex((x+1)+(y+1)*width);   // 11
-                mesh.addIndex(x+(y+1)*width);     // 10
-            }
-        }
-        
-        meshUtils.calcNormals(mesh, true);
-        //        ofDrawAxis(100);
-        ofPushMatrix();
-        ofRotateX(meshRotateX);
-        ofRotateY(180);
-        ofScale(7,180,20);
-        ofTranslate(-width/2, 0, -height/2);
-        mesh.draw();
-        ofPopMatrix();
-        
-    }
-
-}
 
 
 
@@ -291,43 +206,15 @@ void testApp::drawWaveform() {
 }*/
 
 
-//--------------------------------------------------------------
-void testApp::blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode)
-{
-    ofTexture texBase = base.getTextureReference();
-    ofTexture texBlend = blend.getTextureReference();
-    
-    result.begin();
-    ofClear(0, 0, 0, 1);
-    
-    shaderBlend.begin();
-    shaderBlend.setUniform1f( "blendmix",	mix );
-    shaderBlend.setUniform1i( "blendmode",	mode);
-    shaderBlend.setUniformTexture("texBase",   texBase, 0 );
-    shaderBlend.setUniformTexture("texBlend",  texBlend, 1 );
-    
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-    glTexCoord2f(ofGetWidth(), 0); glVertex3f(ofGetWidth(), 0, 0);
-    glTexCoord2f(ofGetWidth(), ofGetHeight()); glVertex3f(ofGetWidth(), ofGetHeight(), 0);
-    glTexCoord2f(0,ofGetHeight());  glVertex3f(0,ofGetHeight(), 0);
-    glEnd();
-    
-    shaderBlend.end();
-    result.end();
-}
-
 
 //--------------------------------------------------------------
 void testApp::setupGUI(){
 
-    meshRotateX = 0.0;
     camX = 0;
     camY = 150;
     camZ = 1200;
     
-    hScale = 20;
+//    hScale = 20;
     
     float dim = 16;
 	float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
@@ -337,8 +224,8 @@ void testApp::setupGUI(){
     
     gui->addFPSSlider("FPS SLIDER", length-xInit, dim*.25, 1000);
     gui->addSpacer(length-xInit, 1);
-    gui->addSlider("hScale", 1.0, 20.0, &hScale, length-xInit, dim);
-    gui->addSlider("colScale", 1.0, 10.0, &colScale, length-xInit, dim);
+//    gui->addSlider("hScale", 1.0, 20.0, &hScale, length-xInit, dim);
+//    gui->addSlider("colScale", 1.0, 10.0, &colScale, length-xInit, dim);
 //    gui->addLabelToggle("Bloom", true);
 //    gui->addLabelToggle("GodRays", true);
     gui->addSpacer(length-xInit, 1);
@@ -407,22 +294,22 @@ void testApp::keyPressed(int key){
             
         case 'g':
             gui->toggleVisible();
-            colorScheme.gui->toggleVisible();
+            cs.gui->toggleVisible();
             break;
             
             
         case 's':
             state = (state + 1) % 3;
             if (state == 0){
-                colorScheme.gui->setVisible(false);
+                cs.gui->setVisible(false);
             }
             else if (state == 1) {
                 gui->setVisible(false);
-                colorScheme.gui->setVisible(true);
+                cs.gui->setVisible(true);
             }
             else if (state == 2) {
                 gui->setVisible(false);
-                colorScheme.gui->setVisible(false);
+                cs.gui->setVisible(false);
             }
             break;
             
@@ -431,7 +318,7 @@ void testApp::keyPressed(int key){
             break;
         
         case 'r':
-            colorScheme.assignRandom(true);
+            cs.assignRandom(true);
             break;
             
         case 'k':

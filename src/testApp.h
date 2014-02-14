@@ -9,6 +9,7 @@
 
 #include "audioAnalytics.h"
 #include "colorSchemeDesigner.h"
+#include "terrainManager.h"
 //#include "smoother.h"
 #include "decayer.h"
 
@@ -19,12 +20,11 @@ public:
     void update();
     void draw();
     
-    void updateOSC();
     
-    void drawWaves();
-    void drawWaveform();
-    
-    void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
+//    void drawWaves();
+//    void drawWaveform();
+//    
+//    void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
     
     void setupGUI();
     void guiEvent(ofxUIEventArgs &e);
@@ -41,48 +41,47 @@ public:
     
 	
 	audioAnalytics aa;
-    colorSchemeDesigner colorScheme;
+    colorSchemeDesigner cs;
+        int state;
     
+    terrainManager tm;
+    
+    //postproc vars
+//    bool drawPost;
+    float width, height;
     ofxPostProcessing post;
     vector<RenderPass::Ptr> renderPasses;
     
     
+    //cam
     decayer camYDecayed;
     smoother camYSmoothed;
     ofCamera cam;
     
-    int state;
+
     
     //waves
-    vector<vector<float> > waveHistory;
-    vector<ofFloatColor> waveHiHistory;
-    vector<ofFloatColor> waveLoHistory;
-    
-    ofxMeshUtils meshUtils;
+//    vector<vector<float> > waveHistory;
+//    vector<ofFloatColor> waveHiHistory;
+//    vector<ofFloatColor> waveLoHistory;
+//    
+//    ofxMeshUtils meshUtils;
+//    float hScale, colScale;
+
     
 
     //UI variables
     ofxUICanvas *gui;
     
-    float meshRotateX;
     float camX, camY, camZ;
     float lookatX, lookatY, lookatZ;
 
-    //postproc vars
-    bool drawPost;
-    
-    //blend
-    ofShader shaderBlend;
-    float shadeBlendMix;
-    int shadeBlendMode;
-    
-    float hScale, colScale;
-    
-    float width, height;
+
     
     //ofFloatColor waveLo, waveHi, bg;
     vector<ofFloatColor> colors;
-    
+   
+    ///lights
     ofLight pointLight;
     ofMaterial material;
     
