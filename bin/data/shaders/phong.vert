@@ -1,8 +1,31 @@
-varying vec3 N;
-varying vec3 v;
-void main(void)  
-{     
-   v = vec3(gl_ModelViewMatrix * gl_Vertex);       
-   N = normalize(gl_NormalMatrix * gl_Normal);
-   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;  
+#extension GL_EXT_gpu_shader4 : require
+
+// phong shader code pilfered from http://www.ozone3d.net/tutorials/glsl_lighting_phong.php
+
+// we need these for Phong shading
+
+varying vec3 normal, lightDir, eyeVec;
+
+// this is where the magic happens. notice 'flat' before varying
+// and the compiler instruction for the extension at the top of this file.
+
+flat varying vec3  flatNormal;
+
+// these switches set through oF
+
+uniform float shouldRenderNormals;
+uniform float shouldUseFlatShading;
+
+
+void main( void )
+{
+	normal = gl_NormalMatrix * gl_Normal;
+	flatNormal = gl_NormalMatrix * gl_Normal;
+	
+	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
+	
+	lightDir = vec3(gl_LightSource[0].position.xyz - vVertex);
+	eyeVec = -vVertex;
+	
+	gl_Position = ftransform();
 }

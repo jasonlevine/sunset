@@ -13,6 +13,7 @@
 class postProcManager {
 public:
     void setup();
+    void keyPressed(int key);
     
     float width, height;
     ofxPostProcessing post;

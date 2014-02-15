@@ -22,5 +22,16 @@ public:
     
     ofLight pointLight;
     ofMaterial material;
+    
+    ofShader*   mShdPhong;
+	ofLight		mLigDirectional;
+	ofMaterial	mMatMainMaterial;
+    
+	ofMesh		mMshCube;
+	
+	bool		isShaderDirty;
+	bool		shouldDrawBuiltinBox;
+	bool		shouldRenderNormals;
+	bool		shouldUseFlatShading;
 
 };

@@ -91,7 +91,7 @@ void terrainManager::draw(){
         meshUtils.calcNormals(mesh, true);
         //        ofDrawAxis(100);
         ofPushMatrix();
-        ofRotateY(180);
+//        ofRotateY(180);
         ofScale(7,180 * 20,20);
         ofTranslate(-width/2, 0, -height/2);
         mesh.draw();

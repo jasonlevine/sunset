@@ -6,7 +6,7 @@ void testApp::setup(){
 
     ofSetFrameRate(30);
     ofSetDepthTest(true);
-    state = 0;
+    state = 3;
     
     aa.playStems(0);
     cs.setup();
@@ -17,21 +17,32 @@ void testApp::setup(){
     lm.setup(&cs);
     pm.setup();
     
-  
-//post
-//    width = 1920;
-//    height = 1080;
-//    
-//    // Setup post-processing chain
-//    post.init(width, height);
-//    post.createPass<GodRaysPass>()->setEnabled(true);
-//    
-//    renderPasses = post.getPasses();
-    
     useLights = true;
     
-    
     setupGUI();
+    
+    isShaderDirty = true;
+    
+	mLigDirectional.setup();
+	mLigDirectional.setDirectional();
+    
+	mCamMainCam.setupPerspective(false);
+    cm.cam.setupPerspective(false);
+	mLigDirectional.setAmbientColor(ofColor::fromHsb(100, 0, 100));
+	mLigDirectional.setDiffuseColor(ofColor::fromHsb(20, 120, 128));
+	mLigDirectional.setSpecularColor(ofColor(255,255,255));
+	
+	mMatMainMaterial.setDiffuseColor(ofColor(0,0,0));
+	mMatMainMaterial.setSpecularColor(ofColor(200,200,200));
+	mMatMainMaterial.setShininess(25.0f);
+	
+	mCamMainCam.setDistance(200);
+	
+	
+	shouldDrawBuiltinBox = false;
+	shouldRenderNormals = false;
+	shouldUseFlatShading = true;
+
 }
 
 //--------------------------------------------------------------
@@ -48,6 +59,21 @@ void testApp::update(){
     lm.update();
     
     gui->update();
+    
+    if (isShaderDirty){
+		
+		GLuint err = glGetError();	// we need this to clear out the error buffer.
+		
+		if (mShdPhong != NULL ) delete mShdPhong;
+		mShdPhong = new ofShader();
+		mShdPhong->load("shaders/phong");
+		err = glGetError();	// we need this to clear out the error buffer.
+		ofLogNotice() << "Loaded Shader: " << err;
+        
+		
+		isShaderDirty = false;
+	}
+
     
 }
 
@@ -77,6 +103,72 @@ void testApp::draw(){
     }
     else if (state == 2) {
         aa.drawAnalytics();
+    }
+    else if (state == 3) {
+        glShadeModel(GL_SMOOTH);
+        glProvokingVertex(GL_LAST_VERTEX_CONVENTION);
+        
+        ofBackgroundGradient(ofColor::fromHsb(0, 0, 120), ofColor::fromHsb(0, 0, 0));
+        
+//        cm.cam.begin();
+        mCamMainCam.begin();
+        ofEnableLighting();
+        
+        mLigDirectional.setGlobalPosition(1000, 1000, 1000);
+        mLigDirectional.lookAt(ofVec3f(0,0,0));
+        
+        ofEnableSeparateSpecularLight();
+        
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        
+        mLigDirectional.enable();
+        ofSetColor(mLigDirectional.getDiffuseColor());
+        mMatMainMaterial.begin();
+        
+        mShdPhong->begin();
+        
+        if (shouldRenderNormals){
+            mShdPhong->setUniform1f("shouldRenderNormals", 1.0);
+        } else {
+            mShdPhong->setUniform1f("shouldRenderNormals", 0.0);
+        }
+        
+        glPushAttrib(GL_SHADE_MODEL);
+        if (shouldUseFlatShading){
+            mShdPhong->setUniform1f("shouldUseFlatShading", 1.0);
+            glShadeModel(GL_FLAT);
+            glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);		// OpenGL default is GL_LAST_VERTEX_CONVENTION
+        } else {
+            mShdPhong->setUniform1f("shouldUseFlatShading", 0.0);
+            glShadeModel(GL_SMOOTH);
+            glProvokingVertex(GL_LAST_VERTEX_CONVENTION);
+        }
+        
+        tm.draw();
+        // restores shade model
+        glPopAttrib();
+        // restores vertex convention defaults.
+        glProvokingVertex(GL_LAST_VERTEX_CONVENTION);
+        
+        mShdPhong->end();
+        
+        // we revert to default values, to not end up
+        
+        
+        mMatMainMaterial.end();
+        mLigDirectional.disable();
+        
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        
+        ofDisableLighting();
+        
+        
+//        cm.cam.end();
+        mCamMainCam.end();
+
     }
 
     ofDisableAlphaBlending();
@@ -110,18 +202,6 @@ void testApp::setupGUI(){
 void testApp::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName();
     int kind = e.widget->getKind();
-    
-//    if(name == "Bloom") //kind == OFX_UI_WIDGET_LABELBUTTON
-//    {
-//        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
-//        post[0]->setEnabled(button->getValue());
-//    }
-//    
-//    if(name == "GodRays") //kind == OFX_UI_WIDGET_LABELBUTTON
-//    {
-//        ofxUILabelButton *button = (ofxUILabelButton *) e.widget;
-//        post[1]->setEnabled(button->getValue());
-//    }
 
 }
 
@@ -129,10 +209,7 @@ void testApp::guiEvent(ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    unsigned idx = key - '0';
-    if (idx < pm.post.size()) pm.post[idx]->setEnabled(!pm.post[idx]->getEnabled());
-
-    
+    pm.keyPressed(key);
     
     switch (key) {
 
@@ -148,8 +225,7 @@ void testApp::keyPressed(int key){
         case '0':
             aa.setMode(key - 48);
             break;
-
-                            
+            
             
         case 'f':
             ofToggleFullscreen();
@@ -162,7 +238,7 @@ void testApp::keyPressed(int key){
             
             
         case 's':
-            state = (state + 1) % 3;
+            state = (state + 1) % 4;
             if (state == 0){
                 cs.gui->setVisible(false);
             }
@@ -193,6 +269,12 @@ void testApp::keyPressed(int key){
             useLights = !useLights;
             break;
         
+        case 'n':
+			shouldRenderNormals ^= true;
+			break;
+		case 'q':
+			shouldUseFlatShading ^= true;
+			break;
     }
 }
 

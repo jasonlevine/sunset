@@ -10,7 +10,12 @@
 
 void cameraManager::setup(terrainManager * _tm) {
     tm = _tm;
-        
+    
+    camX = 0;
+    camY = 150;
+    camZ = 600;
+    
+    
     lookatX = 0;
     lookatY = 0;
     lookatZ = -600;

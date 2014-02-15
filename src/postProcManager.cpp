@@ -20,4 +20,8 @@ void postProcManager::setup() {
 }
 
 
-    
+void postProcManager::keyPressed(int key){
+    unsigned idx = key - '0';
+    if (idx < post.size()) post[idx]->setEnabled(!post[idx]->getEnabled());
+}
+

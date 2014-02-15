@@ -1,22 +1,61 @@
-varying vec3 N;
-varying vec3 v;    
-void main (void)  
-{  
-   vec3 L = normalize(gl_LightSource[0].position.xyz - v);   
-   vec3 E = normalize(-v); // we are in Eye Coordinates, so EyePos is (0,0,0)  
-   vec3 R = normalize(-reflect(L,N));  
- 
-   //calculate Ambient Term:  
-   vec4 Iamb = gl_FrontLightProduct[0].ambient;    
+#extension GL_EXT_gpu_shader4 : require
 
-   //calculate Diffuse Term:  
-   vec4 Idiff = gl_FrontLightProduct[0].diffuse * max(dot(N,L), 0.0);
-   Idiff = clamp(Idiff, 0.0, 1.0);     
-   
-   // calculate Specular Term:
-   vec4 Ispec = gl_FrontLightProduct[0].specular 
-                * pow(max(dot(R,E),0.0),0.3*gl_FrontMaterial.shininess);
-   Ispec = clamp(Ispec, 0.0, 1.0); 
-   // write Total Color:  
-   gl_FragColor = gl_FrontLightModelProduct.sceneColor + Iamb + Idiff + Ispec;     
+// we need these for Phong shading
+
+// phong shader code pilfered from http://www.ozone3d.net/tutorials/glsl_lighting_phong.php
+
+varying vec3 normal, lightDir, eyeVec;
+
+// this is where the magic happens. notice 'flat' before varying
+// and the compiler instruction for the extension at the top of this file.
+
+flat varying vec3  flatNormal;
+
+// these switches set through oF
+
+uniform float shouldRenderNormals;
+uniform float shouldUseFlatShading;
+
+
+void main( void )
+{
+	vec4 final_color =
+	(gl_FrontLightModelProduct.sceneColor * gl_FrontMaterial.ambient) +
+	(gl_LightSource[0].ambient * gl_FrontMaterial.ambient);
+	
+	vec3 selectedNormal;
+	
+	if (shouldUseFlatShading==1.0){
+		selectedNormal = flatNormal;
+	} else {
+		selectedNormal = normal;
+	}
+	
+	vec3 N = normalize(selectedNormal);
+	vec3 L = normalize(lightDir);
+	
+	float lambertTerm = dot(N,L);
+	
+	if(lambertTerm > 0.0)
+	{
+		final_color += gl_LightSource[0].diffuse *
+		gl_FrontMaterial.diffuse *
+		lambertTerm;
+		
+		vec3 E = normalize(eyeVec);
+		vec3 R = reflect(-L, N);
+		float specular = pow( max(dot(R, E), 0.0),
+		gl_FrontMaterial.shininess );
+		final_color += gl_LightSource[0].specular *
+		gl_FrontMaterial.specular *
+		specular;
+	}
+	
+	
+	gl_FragColor = final_color;
+	
+	if (shouldRenderNormals == 1.0){
+		gl_FragColor = vec4((N + vec3(1.0, 1.0, 1.0)) / 2.0,1.0);
+	}
+
 }

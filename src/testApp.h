@@ -44,18 +44,23 @@ public:
     lightManager lm;
     postProcManager pm;
     
-     int state;
-    
-    //postproc vars
-//    float width, height;
-//    ofxPostProcessing post;
-//    vector<RenderPass::Ptr> renderPasses;
+    int state;
 
-
-    //UI variables
     ofxUICanvas *gui;
-
     
     bool useLights;
+    
+    //phong
+    ofEasyCam	mCamMainCam;
+    ofShader*   mShdPhong;
+	ofLight		mLigDirectional;
+	ofMaterial	mMatMainMaterial;
+    
+	ofMesh		mMshCube;
+	
+	bool		isShaderDirty;
+	bool		shouldDrawBuiltinBox;
+	bool		shouldRenderNormals;
+	bool		shouldUseFlatShading;
     
 };
