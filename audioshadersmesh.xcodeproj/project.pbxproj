@@ -91,6 +91,9 @@
 		90ABE9B1183BD51700EC0F68 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90ABE9AC183BD51700EC0F68 /* ofxXmlSettings.cpp */; };
 		90B696DD187921CE00B5F3F9 /* colorSchemeDesigner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */; };
 		90C1434018AEBE0400250E11 /* terrainManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C1433E18AEBE0400250E11 /* terrainManager.cpp */; };
+		90C1434318AEC8B000250E11 /* cameraManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C1434118AEC8B000250E11 /* cameraManager.cpp */; };
+		90C1434618AED7A500250E11 /* lightManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C1434418AED7A500250E11 /* lightManager.cpp */; };
+		90C1434A18AEE77000250E11 /* postProcManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C1434818AEE77000250E11 /* postProcManager.cpp */; };
 		90C3DD4B1886664F007F7DB5 /* ofxMeshUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */; };
 		90C3DD4E18866B59007F7DB5 /* audioAnalytics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C3DD4C18866B59007F7DB5 /* audioAnalytics.cpp */; };
 		9177f62acd8b721065a083f069ca8361 /* ofxAudioDeviceControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = ae197401a06411e94419ee7963ba271f /* ofxAudioDeviceControl.mm */; };
@@ -362,6 +365,12 @@
 		90B696DC187921CE00B5F3F9 /* colorSchemeDesigner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorSchemeDesigner.h; sourceTree = "<group>"; };
 		90C1433E18AEBE0400250E11 /* terrainManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = terrainManager.cpp; sourceTree = "<group>"; };
 		90C1433F18AEBE0400250E11 /* terrainManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = terrainManager.h; sourceTree = "<group>"; };
+		90C1434118AEC8B000250E11 /* cameraManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cameraManager.cpp; sourceTree = "<group>"; };
+		90C1434218AEC8B000250E11 /* cameraManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameraManager.h; sourceTree = "<group>"; };
+		90C1434418AED7A500250E11 /* lightManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lightManager.cpp; sourceTree = "<group>"; };
+		90C1434518AED7A500250E11 /* lightManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lightManager.h; sourceTree = "<group>"; };
+		90C1434818AEE77000250E11 /* postProcManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = postProcManager.cpp; sourceTree = "<group>"; };
+		90C1434918AEE77000250E11 /* postProcManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = postProcManager.h; sourceTree = "<group>"; };
 		90C3DD471886664F007F7DB5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		90C3DD491886664F007F7DB5 /* ofxMeshUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMeshUtils.cpp; sourceTree = "<group>"; };
 		90C3DD4A1886664F007F7DB5 /* ofxMeshUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMeshUtils.h; sourceTree = "<group>"; };
@@ -841,6 +850,24 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		90C1434718AEE5CE00250E11 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				90A048A3187B958300522E14 /* audioAnalytics */,
+				90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */,
+				90B696DC187921CE00B5F3F9 /* colorSchemeDesigner.h */,
+				90C1433E18AEBE0400250E11 /* terrainManager.cpp */,
+				90C1433F18AEBE0400250E11 /* terrainManager.h */,
+				90C1434118AEC8B000250E11 /* cameraManager.cpp */,
+				90C1434218AEC8B000250E11 /* cameraManager.h */,
+				90C1434418AED7A500250E11 /* lightManager.cpp */,
+				90C1434518AED7A500250E11 /* lightManager.h */,
+				90C1434818AEE77000250E11 /* postProcManager.cpp */,
+				90C1434918AEE77000250E11 /* postProcManager.h */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
 		90C3DD461886664F007F7DB5 /* ofxMeshUtils */ = {
 			isa = PBXGroup;
 			children = (
@@ -960,14 +987,10 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				90A048A3187B958300522E14 /* audioAnalytics */,
-				90B696DB187921CE00B5F3F9 /* colorSchemeDesigner.cpp */,
-				90B696DC187921CE00B5F3F9 /* colorSchemeDesigner.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
-				90C1433E18AEBE0400250E11 /* terrainManager.cpp */,
-				90C1433F18AEBE0400250E11 /* terrainManager.h */,
+				90C1434718AEE5CE00250E11 /* Managers */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1172,6 +1195,7 @@
 				71239fabd9dd8dade3e2eff959fb267b /* ofxAudioUnitMixer.cpp in Sources */,
 				900D7B71189A25E4001CEA54 /* ofxUI2DGraph.cpp in Sources */,
 				c0a1f9451231b08dccffc838143dfcfa /* ofxAudioUnitNetReceive.cpp in Sources */,
+				90C1434A18AEE77000250E11 /* postProcManager.cpp in Sources */,
 				900D7B7C189A25E4001CEA54 /* ofxUIFPS.cpp in Sources */,
 				900D7B92189A25E4001CEA54 /* ofxUISortableList.cpp in Sources */,
 				900D7B84189A25E4001CEA54 /* ofxUILabel.cpp in Sources */,
@@ -1181,6 +1205,7 @@
 				250a710d8814bf6d345b0877aa3e879b /* ofxAudioUnitNetSend.cpp in Sources */,
 				900D7B8F189A25E4001CEA54 /* ofxUIRotarySlider.cpp in Sources */,
 				f46d757e6d52dffe3a9c169bfec4ec4b /* ofxAudioUnitOutput.cpp in Sources */,
+				90C1434318AEC8B000250E11 /* cameraManager.cpp in Sources */,
 				aa26bbda5e32e5bb20c82addd5114453 /* ofxAudioUnitRecorder.cpp in Sources */,
 				900D7B87189A25E4001CEA54 /* ofxUIMinimalSlider.cpp in Sources */,
 				90ABE9B0183BD51700EC0F68 /* tinyxmlparser.cpp in Sources */,
@@ -1232,6 +1257,7 @@
 				4355fd81c3f9dde40b10ce943ba6e335 /* SSAOPass.cpp in Sources */,
 				900D7B91189A25E4001CEA54 /* ofxUISlider.cpp in Sources */,
 				900D7B8D189A25E4001CEA54 /* ofxUIRangeSlider.cpp in Sources */,
+				90C1434618AED7A500250E11 /* lightManager.cpp in Sources */,
 				900D7B8A189A25E4001CEA54 /* ofxUIMultiImageToggle.cpp in Sources */,
 				900D7B73189A25E4001CEA54 /* ofxUIBaseDraws.cpp in Sources */,
 				813e52bd790ce4aaf527dcd4920a2e86 /* ToonPass.cpp in Sources */,

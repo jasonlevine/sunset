@@ -10,7 +10,10 @@
 #include "audioAnalytics.h"
 #include "colorSchemeDesigner.h"
 #include "terrainManager.h"
-//#include "smoother.h"
+#include "cameraManager.h"
+#include "lightManager.h"
+#include "postProcManager.h"
+
 #include "decayer.h"
 
 class testApp : public ofBaseApp{
@@ -19,12 +22,6 @@ public:
     void setup();
     void update();
     void draw();
-    
-    
-//    void drawWaves();
-//    void drawWaveform();
-//    
-//    void blend(ofFbo &base, ofFbo &blend, ofFbo &result, float mix, int mode);
     
     void setupGUI();
     void guiEvent(ofxUIEventArgs &e);
@@ -42,48 +39,22 @@ public:
 	
 	audioAnalytics aa;
     colorSchemeDesigner cs;
-        int state;
-    
     terrainManager tm;
+    cameraManager cm;
+    lightManager lm;
+    postProcManager pm;
+    
+     int state;
     
     //postproc vars
-//    bool drawPost;
-    float width, height;
-    ofxPostProcessing post;
-    vector<RenderPass::Ptr> renderPasses;
-    
-    
-    //cam
-    decayer camYDecayed;
-    smoother camYSmoothed;
-    ofCamera cam;
-    
+//    float width, height;
+//    ofxPostProcessing post;
+//    vector<RenderPass::Ptr> renderPasses;
 
-    
-    //waves
-//    vector<vector<float> > waveHistory;
-//    vector<ofFloatColor> waveHiHistory;
-//    vector<ofFloatColor> waveLoHistory;
-//    
-//    ofxMeshUtils meshUtils;
-//    float hScale, colScale;
-
-    
 
     //UI variables
     ofxUICanvas *gui;
-    
-    float camX, camY, camZ;
-    float lookatX, lookatY, lookatZ;
 
-
-    
-    //ofFloatColor waveLo, waveHi, bg;
-    vector<ofFloatColor> colors;
-   
-    ///lights
-    ofLight pointLight;
-    ofMaterial material;
     
     bool useLights;
     
