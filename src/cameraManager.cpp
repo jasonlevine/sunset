@@ -22,21 +22,43 @@ void cameraManager::setup(terrainManager * _tm) {
     
     camYDecayed.setDecay(0.99);
     camYSmoothed.setNumPValues(25);
+    
+    camXLookAhead = 10;
+    camYLookAhead = 45;
+    camXRange = 5;
+    center = 256;
+    
+//    cam.setScale(1,-1,1);
 }
 
 void cameraManager::update() {
-    //    if (waveHistory[10][camX + 255] < waveHistory[5][camX + 256]) {
-    //        camX--;
-    //    }
-    //    else if (waveHistory[10][camX + 257] < waveHistory[5][camX + 256]) {
-    //        camX++;
-    //    }
+    lastCamX = camX;
+    lastCamY = camY;
     
     
-    camYDecayed.addValue(tm->waveHistory[45][camX + 256] * 20 * 180 + 100);
+    
+    if (tm->waveHistory[camXLookAhead][camX + center - 2] < tm->waveHistory[camXLookAhead][camX + center + 2]) {
+           camX-=2;
+       }
+        else if (tm->waveHistory[camXLookAhead][camX + center - 2] < tm->waveHistory[camXLookAhead][camX + center + 2]) {
+           camX+=2;
+    }
+
+    
+    camYDecayed.addValue(tm->waveHistory[45][camX + 256] * 20 * 180 + 150);
     camYDecayed.update();
     camYSmoothed.addValue(camYDecayed.getValue());
     camY = camYSmoothed.getMean();
+    
+//    if ( tm->waveHistory[45][camX + 256] * 20 * 180 + 100 > camY) {
+//        camYSmoothed.addValue(tm->waveHistory[45][camX + 256] * 20 * 180 + 100);
+//        camY = camYSmoothed.getMean();
+//    }
+//    else {
+//        camY *= 0.99;
+//    }
+    lookatX = camX - lastCamX;
+    lookatY = camY - lastCamY;
     
     cam.setPosition(camX, camY, camZ);
     cam.lookAt(ofVec3f(lookatX, lookatY, lookatZ));

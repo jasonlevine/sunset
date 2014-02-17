@@ -6,6 +6,9 @@
 
 varying vec3 normal, lightDir, eyeVec;
 
+//jason added
+varying vec4 globalColor;
+
 // this is where the magic happens. notice 'flat' before varying
 // and the compiler instruction for the extension at the top of this file.
 
@@ -20,9 +23,9 @@ uniform float shouldUseFlatShading;
 void main( void )
 {
 	vec4 final_color =
-	(gl_FrontLightModelProduct.sceneColor * gl_FrontMaterial.ambient) +
-	(gl_LightSource[0].ambient * gl_FrontMaterial.ambient);
-	
+	(gl_FrontLightModelProduct.sceneColor *  globalColor) +
+	(gl_LightSource[0].ambient * globalColor);
+	//gl_FrontMaterial.ambient
 	vec3 selectedNormal;
 	
 	if (shouldUseFlatShading==1.0){

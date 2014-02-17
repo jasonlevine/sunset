@@ -5,6 +5,9 @@
 // we need these for Phong shading
 
 varying vec3 normal, lightDir, eyeVec;
+//jason added
+varying vec4 globalColor;
+
 
 // this is where the magic happens. notice 'flat' before varying
 // and the compiler instruction for the extension at the top of this file.
@@ -26,6 +29,9 @@ void main( void )
 	
 	lightDir = vec3(gl_LightSource[0].position.xyz - vVertex);
 	eyeVec = -vVertex;
+    
+    //jason added
+    globalColor = gl_Color;
 	
 	gl_Position = ftransform();
 }

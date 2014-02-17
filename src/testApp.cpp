@@ -12,6 +12,17 @@ void testApp::setup(){
     cs.setup();
     cs.gui->setVisible(false);
     
+//    vector<ofFloatColor> colors;
+//    for (int i = 0; i < 13; i++) {
+//        colors.push_back(ofFloatColor(ofRandomuf()));
+//    }
+    
+//    for (int i = 0; i < 13; i++) {
+//        cs.addColorRef(&colors[i]);
+//    }
+    
+    cs.assignRandom(true);
+    
     tm.setup(&aa, &cs);
     cm.setup(&tm);
     lm.setup(&cs);
@@ -26,22 +37,26 @@ void testApp::setup(){
 	mLigDirectional.setup();
 	mLigDirectional.setDirectional();
     
-	mCamMainCam.setupPerspective(false);
-    cm.cam.setupPerspective(false);
+
 	mLigDirectional.setAmbientColor(ofColor::fromHsb(100, 0, 100));
 	mLigDirectional.setDiffuseColor(ofColor::fromHsb(20, 120, 128));
 	mLigDirectional.setSpecularColor(ofColor(255,255,255));
 	
 	mMatMainMaterial.setDiffuseColor(ofColor(0,0,0));
 	mMatMainMaterial.setSpecularColor(ofColor(200,200,200));
-	mMatMainMaterial.setShininess(25.0f);
+	mMatMainMaterial.setShininess(64.0f);
 	
+    
+    mCamMainCam.setupPerspective(false);
+    cm.cam.setupPerspective(false);
+    
 	mCamMainCam.setDistance(200);
+//	cm.cam.setDistance(200);
 	
-	
-	shouldDrawBuiltinBox = false;
+    updateCam = false;
+
 	shouldRenderNormals = false;
-	shouldUseFlatShading = true;
+	shouldUseFlatShading = false;
 
 }
 
@@ -108,12 +123,24 @@ void testApp::draw(){
         glShadeModel(GL_SMOOTH);
         glProvokingVertex(GL_LAST_VERTEX_CONVENTION);
         
-        ofBackgroundGradient(ofColor::fromHsb(0, 0, 120), ofColor::fromHsb(0, 0, 0));
+        ofFloatColor gradientStart = cs.colorScheme[0][0];
+        float complementHue = gradientStart.getHue() + 0.5;
+        if (complementHue > 1.0) complementHue-=1.0;
+        ofFloatColor gradientEnd;
+        gradientEnd.setHue(complementHue);
+        gradientEnd.setSaturation(gradientStart.getSaturation() - 0.2);
         
-//        cm.cam.begin();
-        mCamMainCam.begin();
+        ofBackgroundGradient(gradientEnd, gradientStart);
+        
+        
+        
+        cm.cam.begin();
+//        mCamMainCam.begin();
         ofEnableLighting();
         
+//        mLigDirectional.setAmbientColor( cs.colorScheme[0][2]);
+//        mLigDirectional.setDiffuseColor( cs.colorScheme[0][1]);
+        mLigDirectional.setSpecularColor(gradientStart);
         mLigDirectional.setGlobalPosition(1000, 1000, 1000);
         mLigDirectional.lookAt(ofVec3f(0,0,0));
         
@@ -146,7 +173,9 @@ void testApp::draw(){
             glProvokingVertex(GL_LAST_VERTEX_CONVENTION);
         }
         
+
         tm.draw();
+
         // restores shade model
         glPopAttrib();
         // restores vertex convention defaults.
@@ -166,8 +195,8 @@ void testApp::draw(){
         ofDisableLighting();
         
         
-//        cm.cam.end();
-        mCamMainCam.end();
+        cm.cam.end();
+//        mCamMainCam.end();
 
     }
 
@@ -275,6 +304,10 @@ void testApp::keyPressed(int key){
 		case 'q':
 			shouldUseFlatShading ^= true;
 			break;
+            
+        case 'c':
+            updateCam = !updateCam;
+            break;
     }
 }
 

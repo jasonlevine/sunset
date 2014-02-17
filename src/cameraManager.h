@@ -20,12 +20,19 @@ public:
     terrainManager * tm;
     
     ofCamera cam;
+//    ofEasyCam cam;
     void begin() { cam.begin(); }
     void end() { cam.end(); }
     
     float camX, camY, camZ;
+    float lastCamX, lastCamY;
     float lookatX, lookatY, lookatZ;
     
     decayer camYDecayed;
     smoother camYSmoothed;
+    
+    int camXLookAhead, camYLookAhead;
+    int camXRange;
+    int center;
+    
 };

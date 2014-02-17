@@ -146,7 +146,7 @@ void audioAnalytics::setupVectors(){
 //--------------------------------------------------------------
 void audioAnalytics::loadTracks(){
     //vox
-    stems[0]->setFile(ofFilePath::getAbsolutePath("cloudsintro2.mp3"));
+    stems[0]->setFile(ofFilePath::getAbsolutePath("clouds11_125.wav"));
     stemNames[0] = "clouds11_125.wav";
 //    cloudsintro2.mp3
   }

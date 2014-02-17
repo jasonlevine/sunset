@@ -65,14 +65,15 @@ void terrainManager::draw(){
         
         for (int y = 0; y < height; y++){
             for (int x = 0; x<width; x++){
-                float h = waveHistory[y][x];
+                float h = -waveHistory[y][x];
                 mesh.addVertex(ofPoint(x, h, y)); // * hScale
                 
                 //                float col = h * colScale;
                 //                mesh.addColor(waveHiHistory[y] * col + waveLoHistory[y] * (1.0 - col));
                 
                 mesh.addColor(waveHiHistory[y]);
-
+//                mesh.addColor(*cs->assignColors[int((h+1)*180) % (int)cs->assignColors.size()]);
+//                mesh.addColor(*cs->assignColors[0]);
             }
         }
 
@@ -91,7 +92,8 @@ void terrainManager::draw(){
         meshUtils.calcNormals(mesh, true);
         //        ofDrawAxis(100);
         ofPushMatrix();
-//        ofRotateY(180);
+        ofRotateY(180);
+        ofRotateZ(180);
         ofScale(7,180 * 20,20);
         ofTranslate(-width/2, 0, -height/2);
         mesh.draw();
